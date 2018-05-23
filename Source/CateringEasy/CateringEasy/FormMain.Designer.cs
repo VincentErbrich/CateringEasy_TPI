@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Commandes en attente");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.imlMenu = new System.Windows.Forms.ImageList(this.components);
             this.tlpHome = new System.Windows.Forms.TableLayoutPanel();
@@ -62,7 +61,7 @@
             this.tlpSettingsHeader = new System.Windows.Forms.TableLayoutPanel();
             this.lblSettings = new System.Windows.Forms.Label();
             this.btnSettingsReturn = new System.Windows.Forms.Button();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.accCuisine = new Opulos.Core.UI.Accordion();
             this.tlpHome.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctHomeSettings)).BeginInit();
             this.tlpServeur.SuspendLayout();
@@ -236,11 +235,11 @@
             this.tlpCuisine.ColumnCount = 1;
             this.tlpCuisine.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpCuisine.Controls.Add(this.tlpCuisineHeader, 0, 0);
-            this.tlpCuisine.Controls.Add(this.listView1, 0, 1);
+            this.tlpCuisine.Controls.Add(this.accCuisine, 0, 1);
             this.tlpCuisine.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpCuisine.Location = new System.Drawing.Point(0, 0);
             this.tlpCuisine.Name = "tlpCuisine";
-            this.tlpCuisine.RowCount = 2;
+            this.tlpCuisine.RowCount = 3;
             this.tlpCuisine.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3.483854F));
             this.tlpCuisine.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 96.51614F));
             this.tlpCuisine.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -523,16 +522,68 @@
             this.btnSettingsReturn.UseVisualStyleBackColor = true;
             this.btnSettingsReturn.Click += new System.EventHandler(this.btnReturn_Click);
             // 
-            // listView1
+            // accCuisine
             // 
-            this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
-            this.listView1.Location = new System.Drawing.Point(3, 39);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1074, 323);
-            this.listView1.TabIndex = 3;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.accCuisine.AddResizeBars = true;
+            this.accCuisine.AllowMouseResize = true;
+            this.accCuisine.AnimateCloseEffect = ((Opulos.Core.UI.AnimateWindowFlags)(((Opulos.Core.UI.AnimateWindowFlags.VerticalNegative | Opulos.Core.UI.AnimateWindowFlags.Hide) 
+            | Opulos.Core.UI.AnimateWindowFlags.Slide)));
+            this.accCuisine.AnimateCloseMillis = 300;
+            this.accCuisine.AnimateOpenEffect = ((Opulos.Core.UI.AnimateWindowFlags)(((Opulos.Core.UI.AnimateWindowFlags.VerticalPositive | Opulos.Core.UI.AnimateWindowFlags.Show) 
+            | Opulos.Core.UI.AnimateWindowFlags.Slide)));
+            this.accCuisine.AnimateOpenMillis = 300;
+            this.accCuisine.AutoFixDockStyle = true;
+            this.accCuisine.AutoScroll = true;
+            this.accCuisine.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.accCuisine.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.accCuisine.CheckBoxFactory = null;
+            this.accCuisine.CheckBoxMargin = new System.Windows.Forms.Padding(2);
+            this.accCuisine.ContentBackColor = null;
+            this.accCuisine.ContentMargin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.accCuisine.ContentPadding = new System.Windows.Forms.Padding(1);
+            this.accCuisine.ControlBackColor = null;
+            this.accCuisine.ControlMinimumHeightIsItsPreferredHeight = true;
+            this.accCuisine.ControlMinimumWidthIsItsPreferredWidth = true;
+            this.accCuisine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.accCuisine.DownArrow = null;
+            this.accCuisine.FillHeight = true;
+            this.accCuisine.FillLastOpened = false;
+            this.accCuisine.FillModeGrowOnly = false;
+            this.accCuisine.FillResetOnCollapse = false;
+            this.accCuisine.FillWidth = true;
+            this.accCuisine.GrabCursor = System.Windows.Forms.Cursors.SizeNS;
+            this.accCuisine.GrabRequiresPositiveFillWeight = true;
+            this.accCuisine.GrabWidth = 6;
+            this.accCuisine.GrowAndShrink = true;
+            this.accCuisine.Insets = new System.Windows.Forms.Padding(0);
+            this.accCuisine.Location = new System.Drawing.Point(3, 39);
+            this.accCuisine.Name = "accCuisine";
+            this.accCuisine.OpenOnAdd = false;
+            this.accCuisine.OpenOneOnly = false;
+            this.accCuisine.ResizeBarFactory = null;
+            this.accCuisine.ResizeBarsAlign = 0.5D;
+            this.accCuisine.ResizeBarsArrowKeyDelta = 10;
+            this.accCuisine.ResizeBarsFadeInMillis = 800;
+            this.accCuisine.ResizeBarsFadeOutMillis = 800;
+            this.accCuisine.ResizeBarsFadeProximity = 24;
+            this.accCuisine.ResizeBarsFill = 1D;
+            this.accCuisine.ResizeBarsKeepFocusAfterMouseDrag = false;
+            this.accCuisine.ResizeBarsKeepFocusIfControlOutOfView = true;
+            this.accCuisine.ResizeBarsKeepFocusOnClick = true;
+            this.accCuisine.ResizeBarsMargin = null;
+            this.accCuisine.ResizeBarsMinimumLength = 50;
+            this.accCuisine.ResizeBarsStayInViewOnArrowKey = true;
+            this.accCuisine.ResizeBarsStayInViewOnMouseDrag = true;
+            this.accCuisine.ResizeBarsStayVisibleIfFocused = true;
+            this.accCuisine.ResizeBarsTabStop = true;
+            this.accCuisine.ShowPartiallyVisibleResizeBars = false;
+            this.accCuisine.ShowToolMenu = true;
+            this.accCuisine.ShowToolMenuOnHoverWhenClosed = false;
+            this.accCuisine.ShowToolMenuOnRightClick = true;
+            this.accCuisine.ShowToolMenuRequiresPositiveFillWeight = false;
+            this.accCuisine.Size = new System.Drawing.Size(1074, 999);
+            this.accCuisine.TabIndex = 3;
+            this.accCuisine.UpArrow = null;
             // 
             // FormMain
             // 
@@ -557,7 +608,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "CateringEasy";
             this.TopMost = true;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.tlpHome.ResumeLayout(false);
             this.tlpHome.PerformLayout();
@@ -618,7 +669,7 @@
         private System.Windows.Forms.Button btnMenuReturn;
         private System.Windows.Forms.TableLayoutPanel tlpMenu_editHeader;
         private System.Windows.Forms.Button btnMenu_editReturn;
-        private System.Windows.Forms.ListView listView1;
+        private Opulos.Core.UI.Accordion accCuisine;
     }
 }
 

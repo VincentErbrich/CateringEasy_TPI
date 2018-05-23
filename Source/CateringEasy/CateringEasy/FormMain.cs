@@ -17,6 +17,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Opulos.Core.UI;
+
 
 namespace CateringEasy
 {
@@ -38,6 +40,9 @@ namespace CateringEasy
         {
             ShowTableLayoutPanel(tlpHome, tlpHome);
             MenuImages.LoadMenuImages();
+            BuildAccordion(accCuisine);
+            Database_Manager db = new Database_Manager();
+            db.Connexion();
         }
         /*
          * This method requests the HideAllPanels method to hide every TableLayoutPanel, then shows the TableLayoutPanel requested in parameter tlp.
@@ -53,7 +58,7 @@ namespace CateringEasy
          */
         private void HideAllPanels()
         {
-            foreach (Panel p in this.Controls)
+            foreach (Panel p in Controls)
             {
                 p.Hide();
             }
@@ -64,6 +69,15 @@ namespace CateringEasy
             imlMenu.Images.Keys.CopyTo(imagekeys, 0);
 
             Image img = imlMenu.Images[0];
+        }
+        private void BuildAccordion(Accordion acc)
+        {
+            TableLayoutPanel tlp = new TableLayoutPanel { ColumnCount = 2, Dock = DockStyle.Fill, Padding = new Padding(7) };
+            tlp.TabStop = true;
+            tlp.Controls.Add(new Label { Text = "", TextAlign = ContentAlignment.BottomLeft }, 0, 0);
+            tlp.Controls.Add(new Button { Name = ""}, 1, 0);
+            tlp.Controls.Add(new Label { Text = "Last Name", TextAlign = ContentAlignment.BottomLeft }, 0, 1);
+            tlp.Controls.Add(new Button { Name = "" }, 1, 1);
         }
         private void EmptyTableLayoutPanel(TableLayoutPanel tlp)
         {
@@ -79,7 +93,6 @@ namespace CateringEasy
         {
             ShowTableLayoutPanel(tlpServeur, tlpHome);
         }
-
         private void btnHomeClient_Click(object sender, EventArgs e)
         {
             ShowTableLayoutPanel(tlpTable_select, tlpHome);
