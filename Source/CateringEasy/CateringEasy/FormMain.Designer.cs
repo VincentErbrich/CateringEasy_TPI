@@ -234,8 +234,8 @@
             // 
             this.tlpCuisine.ColumnCount = 1;
             this.tlpCuisine.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpCuisine.Controls.Add(this.tlpCuisineHeader, 0, 0);
             this.tlpCuisine.Controls.Add(this.accCuisine, 0, 1);
+            this.tlpCuisine.Controls.Add(this.tlpCuisineHeader, 0, 0);
             this.tlpCuisine.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpCuisine.Location = new System.Drawing.Point(0, 0);
             this.tlpCuisine.Name = "tlpCuisine";
@@ -524,14 +524,14 @@
             // 
             // accCuisine
             // 
-            this.accCuisine.AddResizeBars = true;
-            this.accCuisine.AllowMouseResize = true;
+            this.accCuisine.AddResizeBars = false;
+            this.accCuisine.AllowMouseResize = false;
             this.accCuisine.AnimateCloseEffect = ((Opulos.Core.UI.AnimateWindowFlags)(((Opulos.Core.UI.AnimateWindowFlags.VerticalNegative | Opulos.Core.UI.AnimateWindowFlags.Hide) 
             | Opulos.Core.UI.AnimateWindowFlags.Slide)));
-            this.accCuisine.AnimateCloseMillis = 300;
+            this.accCuisine.AnimateCloseMillis = 100;
             this.accCuisine.AnimateOpenEffect = ((Opulos.Core.UI.AnimateWindowFlags)(((Opulos.Core.UI.AnimateWindowFlags.VerticalPositive | Opulos.Core.UI.AnimateWindowFlags.Show) 
             | Opulos.Core.UI.AnimateWindowFlags.Slide)));
-            this.accCuisine.AnimateOpenMillis = 300;
+            this.accCuisine.AnimateOpenMillis = 100;
             this.accCuisine.AutoFixDockStyle = true;
             this.accCuisine.AutoScroll = true;
             this.accCuisine.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -551,15 +551,17 @@
             this.accCuisine.FillModeGrowOnly = false;
             this.accCuisine.FillResetOnCollapse = false;
             this.accCuisine.FillWidth = true;
+            this.accCuisine.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.accCuisine.GrabCursor = System.Windows.Forms.Cursors.SizeNS;
             this.accCuisine.GrabRequiresPositiveFillWeight = true;
             this.accCuisine.GrabWidth = 6;
             this.accCuisine.GrowAndShrink = true;
-            this.accCuisine.Insets = new System.Windows.Forms.Padding(0);
+            this.accCuisine.Insets = new System.Windows.Forms.Padding(10);
             this.accCuisine.Location = new System.Drawing.Point(3, 39);
             this.accCuisine.Name = "accCuisine";
             this.accCuisine.OpenOnAdd = false;
             this.accCuisine.OpenOneOnly = false;
+            this.accCuisine.Padding = new System.Windows.Forms.Padding(10);
             this.accCuisine.ResizeBarFactory = null;
             this.accCuisine.ResizeBarsAlign = 0.5D;
             this.accCuisine.ResizeBarsArrowKeyDelta = 10;
@@ -591,6 +593,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1080, 1062);
+            this.ControlBox = false;
             this.Controls.Add(this.tlpCuisine);
             this.Controls.Add(this.tlpMenu);
             this.Controls.Add(this.tlpMenu_edit);
@@ -600,7 +603,7 @@
             this.Controls.Add(this.tlpHome);
             this.Controls.Add(this.tlpTable_select);
             this.Font = new System.Drawing.Font("Segoe UI", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(6, 7, 6, 7);
             this.MaximizeBox = false;
@@ -608,7 +611,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "CateringEasy";
             this.TopMost = true;
-            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.tlpHome.ResumeLayout(false);
             this.tlpHome.PerformLayout();

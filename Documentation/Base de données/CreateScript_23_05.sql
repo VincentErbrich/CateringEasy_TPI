@@ -31,8 +31,9 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Table` (
 CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order` (
   `IDOrder` INT NOT NULL,
   `FIDTable` INT NOT NULL,
-  `Completed` TINYINT(1) NOT NULL DEFAULT `0`,
-  `Paid` TINYINT(1) NOT NULL DEFAULT `0`,
+  `Completed` TINYINT(1) NOT NULL DEFAULT 0,
+  `Paid` TINYINT(1) NOT NULL DEFAULT 0,
+  `Started` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`IDOrder`),
   INDEX `fk_Order_Table_idx` (`FIDTable` ASC),
   CONSTRAINT `fk_Order_Table`
@@ -69,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Settings` (
 CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order_MItems` (
   `FIDMenuItem` INT NOT NULL,
   `FIDOrder` INT NOT NULL,
-  `Completed` TINYINT(1) NOT NULL DEFAULT `0`,
+  `Completed` TINYINT(1) NOT NULL DEFAULT 0,
   INDEX `fk_Order_MItems_MenuItem1_idx` (`FIDMenuItem` ASC),
   INDEX `fk_Order_MItems_Order1_idx` (`FIDOrder` ASC),
   CONSTRAINT `fk_Order_MItems_MenuItem1`

@@ -1,0 +1,6 @@
+INSERT INTO `mydb`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (1, 1, 0);
+INSERT INTO `mydb`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (9, 1, 0);
+INSERT INTO `mydb`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (10, 1, 0);
+INSERT INTO `mydb`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (3, 2, 0);
+INSERT INTO `mydb`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (4, 2, 0);
+INSERT INTO `mydb`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (8, 2, 0);

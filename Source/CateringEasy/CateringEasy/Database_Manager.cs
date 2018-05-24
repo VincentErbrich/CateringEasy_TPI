@@ -38,7 +38,7 @@ namespace CateringEasy
             try
             {
                 //  La connexion est initialisée dans une instance de l'objet SQLiteConnection
-                MySqlConnection m_dbConnection = new MySqlConnection("server=cateringeasy.cj29ijqcxwyw.us-east-2.rds.amazonaws.com;database=cateringeasy;user id=cateringeasy;pwd=P4$$w04d_?;");
+                MySqlConnection m_dbConnection = new MySqlConnection("Server=127.0.0.1;Port=3306;UID=cateringeasy;Password=P4$$w04d_?");
                 //  La connexion est ouverte
                 m_dbConnection.Open();
                 //  La connexion est retournée et la méthode stoppée
