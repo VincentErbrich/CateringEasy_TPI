@@ -27,6 +27,13 @@ namespace CateringEasy
 {
     public partial class FormMain : Form
     {
+        private DataGridView dgvMenu = new DataGridView
+        {
+            Dock = DockStyle.Fill,
+            Anchor = AnchorStyles.Top,
+            Name = "dgvMenu",
+            ColumnCount = 2
+        };
         //String property indicating from which TableLayoutPanel the display of the currently displayed TableLayoutPanel has been ordered
         private TableLayoutPanel RedirectedFromTlp { get; set; }
         /*
@@ -66,13 +73,130 @@ namespace CateringEasy
                 p.Hide();
             }
         }
-        private void BuildList(ListView lsv)
+        private void BuildMenuList(bool edit)
         {
-            string[] imagekeys = new string[imlMenu.Images.Count];
-            imlMenu.Images.Keys.CopyTo(imagekeys, 0);
+            //string[] imagekeys = new string[imlMenu.Images.Count];
+            //imlMenu.Images.Keys.CopyTo(imagekeys, 0);
+            /*DataGridView dgvMenu = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                Anchor = AnchorStyles.Top,
+                Name = "dgvMenu",
+                ColumnCount = 2
+            };*/
 
-            Image img = imlMenu.Images[0];
+            dgvMenu.Columns[0].Name ="Nom";
+            dgvMenu.Columns[1].Name ="Prix";
+
+            if (edit)
+            {
+                dgvMenu.ColumnCount++;
+                dgvMenu.Columns[2].Name = "Quantité";
+            }
+
+            Database_Manager db = new Database_Manager();
+            db.Connexion();
+
+            string Currency = "CHF";
+            MySqlDataReader readerCurrency = db.SqlRequest("SELECT Currency FROM cateasy_bd.settings;");
+            try
+            {
+                if (readerCurrency.HasRows)
+                {
+                    while (readerCurrency.Read())
+                    {
+                        Currency = readerCurrency.GetValue(0).ToString();
+                    }
+                }
+            }
+            catch { }
+
+
+            MySqlDataReader readerMenu = db.SqlRequest("SELECT Name, Price FROM cateasy_bd.MenuItem WHERE Remaining > 1");
+            try
+            {
+                if(readerMenu.HasRows)
+                {
+                    while(readerMenu.Read())
+                    {
+                        if(edit)
+                        {
+
+                        }
+                        else
+                        {
+                            Object[] values = new Object[readerMenu.FieldCount];
+                            int fieldCount = readerMenu.GetValues(values);
+
+                            for (int i = 0; i < fieldCount; i++)
+                            {
+                                dgvMenu.Rows.Add(values[0].ToString(), values[1]);
+                            }
+                        }
+                    }
+                }
+
+                DataGridViewButtonColumn dgbAddColumn = new DataGridViewButtonColumn();
+                dgbAddColumn.HeaderText = "Ajouter";
+                dgbAddColumn.Text = "+";
+                dgbAddColumn.UseColumnTextForButtonValue = true;
+                dgvMenu.Columns.Insert(2, dgbAddColumn);
+
+                DataGridViewTextBoxColumn dgtSelected = new DataGridViewTextBoxColumn();
+                dgtSelected.Name = "dgtSelected";
+                dgtSelected.DefaultCellStyle.NullValue = "0";
+                dgtSelected.HeaderText = "";
+                dgvMenu.Columns.Insert(3, dgtSelected);
+
+                DataGridViewButtonColumn dgbRemoveColumn = new DataGridViewButtonColumn();
+                dgbRemoveColumn.HeaderText = "Retirer";
+                dgbRemoveColumn.Text = "-";
+                dgbRemoveColumn.UseColumnTextForButtonValue = true;
+                dgvMenu.Columns.Insert(4, dgbRemoveColumn);
+
+            }
+            catch(Exception e)
+            {
+                Exception_Manager.NewException(e, "Nous avons rencontré un problème lors de la construction du menu. Veuillez contacter le support technique", true);
+            }
+            dgvMenu.CellContentClick += new DataGridViewCellEventHandler(dgvMenu_CellContentClick);
+            tlpMenu.Controls.Add(dgvMenu);
+            
+            
         }
+        private void dgvMenu_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var senderGrid = (DataGridView)sender;
+
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+            {
+                if(e.RowIndex == 2)
+                {
+                    int TimesSelected = Convert.ToInt16(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) + 1;
+                    senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value = TimesSelected.ToString();
+                }
+                else if (e.RowIndex == 2 && Convert.ToInt32(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) >= 0)
+                {
+                    int TimesSelected = Convert.ToInt16(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) + - 1;
+                    senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value = TimesSelected.ToString();
+                }
+            }
+        }
+        /*private void dgvMenu_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ignore clicks that are not on button cells. 
+            if (e.RowIndex < 0 || e.ColumnIndex !=
+            dgvMenu.Columns["Ajouter"].Index) return;
+
+            // Retrieve the task ID.
+            Int32 taskID = (Int32)dgvMenu[0, e.RowIndex].Value;
+
+            dgvMenu.Rows[taskID].Cells[3].Value = "Soin";
+
+        }*/
+        /*
+         * This method builds the order list in the Cuisine part of the application 
+         */
         private void BuildAccordion(Accordion acc)
         {
             Database_Manager db = new Database_Manager();
@@ -181,19 +305,34 @@ namespace CateringEasy
             {
                 if (Regex.IsMatch(btn.Name, "btnOrderStarted*"))
                 {
-                    MySqlDataReader reader = db.SqlRequest("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    db.SqlRequest("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
                     btn.Enabled = false;
                 }
                 else if (Regex.IsMatch(btn.Name, "btnOrderEnded*"))
                 {
-                    MySqlDataReader reader = db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
-                    accCuisine.Controls.Remove(btn.Parent);
+                    db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    MySqlDataReader reader = db.SqlRequest("SELECT FIDMenuItem FROM cateasy_bd.order LEFT JOIN cateasy_bd.order_mitems ON IDOrder = FIDOrder WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    try
+                    {
+                        if(reader.HasRows)
+                        {
+                            while(reader.Read())
+                            {
+                                db.SqlRequest("UPDATE cateasy_bd.menuitem SET Remaining = Remaining - 1 WHERE IDMenuItem = " + reader.GetValue(0) + ";");
+                            }
+                            reader.Close();
+                        }
+                    }
+                    catch(Exception ex2)
+                    {
+                        Exception_Manager.NewException(ex2, "Nous avons rencontré un problème lors de la mise à jour du stock. Veuillez contacter le support technique", true);
+                    }
+                    btn.Parent.Parent.Dispose();
                 }
                 else if (Regex.IsMatch(btn.Name, "btnOrderDelete*"))
                 {
-                    MySqlDataReader reader = db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true, Paid = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true, Paid = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
                     btn.Parent.Parent.Dispose();
-                    BuildAccordion(accCuisine);
                 }
             }
             catch(Exception ex)
@@ -201,6 +340,14 @@ namespace CateringEasy
                 Exception_Manager.NewException(ex, "Nous avons rencontré un problème lors de la mise à jour de la commande. Veuillez contacter le support technique.", false);
             }
         }
-
+        /*
+         * Event handler method for Click event on the confirm table number button
+         * Redirects to the menu and saves the table number.
+         */
+        private void btnTable_selectConfirm_Click(object sender, EventArgs e)
+        {
+            BuildMenuList(false);
+            ShowTableLayoutPanel(tlpMenu, tlpTable_select);
+        }
     }
 }

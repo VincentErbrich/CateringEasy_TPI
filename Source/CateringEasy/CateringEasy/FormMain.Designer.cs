@@ -46,7 +46,6 @@
             this.lblCuisine = new System.Windows.Forms.Label();
             this.btnCuisineReturn = new System.Windows.Forms.Button();
             this.tlpTable_select = new System.Windows.Forms.TableLayoutPanel();
-            this.lblTable_select = new System.Windows.Forms.Label();
             this.tlpMenu = new System.Windows.Forms.TableLayoutPanel();
             this.tlpMenuHeader = new System.Windows.Forms.TableLayoutPanel();
             this.lblMenu = new System.Windows.Forms.Label();
@@ -61,6 +60,12 @@
             this.tlpSettingsHeader = new System.Windows.Forms.TableLayoutPanel();
             this.lblSettings = new System.Windows.Forms.Label();
             this.btnSettingsReturn = new System.Windows.Forms.Button();
+            this.lblTable_select = new System.Windows.Forms.Label();
+            this.tlpTable_selectNumber = new System.Windows.Forms.TableLayoutPanel();
+            this.lblTable_selectNumber = new System.Windows.Forms.Label();
+            this.txtTable_selectNumber = new System.Windows.Forms.TextBox();
+            this.btnTable_selectConfirm = new System.Windows.Forms.Button();
+            this.btnTable_selectReturn = new System.Windows.Forms.Button();
             this.accCuisine = new Opulos.Core.UI.Accordion();
             this.tlpHome.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctHomeSettings)).BeginInit();
@@ -76,6 +81,7 @@
             this.tlpOrder_confirmation.SuspendLayout();
             this.tlpSettings.SuspendLayout();
             this.tlpSettingsHeader.SuspendLayout();
+            this.tlpTable_selectNumber.SuspendLayout();
             this.SuspendLayout();
             // 
             // imlMenu
@@ -292,31 +298,21 @@
             // 
             this.tlpTable_select.ColumnCount = 1;
             this.tlpTable_select.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpTable_select.Controls.Add(this.btnTable_selectReturn, 0, 3);
+            this.tlpTable_select.Controls.Add(this.btnTable_selectConfirm, 0, 2);
+            this.tlpTable_select.Controls.Add(this.tlpTable_selectNumber, 0, 1);
             this.tlpTable_select.Controls.Add(this.lblTable_select, 0, 0);
             this.tlpTable_select.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpTable_select.Location = new System.Drawing.Point(0, 0);
             this.tlpTable_select.Name = "tlpTable_select";
-            this.tlpTable_select.RowCount = 6;
-            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 2.413606F));
-            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.91779F));
-            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.91779F));
-            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.91779F));
-            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.78125F));
-            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15.26042F));
+            this.tlpTable_select.RowCount = 4;
+            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 23.76759F));
+            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 22.0214F));
+            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 22.9435F));
+            this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 31.26751F));
             this.tlpTable_select.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpTable_select.Size = new System.Drawing.Size(1080, 1062);
             this.tlpTable_select.TabIndex = 3;
-            // 
-            // lblTable_select
-            // 
-            this.lblTable_select.AutoSize = true;
-            this.lblTable_select.Dock = System.Windows.Forms.DockStyle.Left;
-            this.lblTable_select.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTable_select.Location = new System.Drawing.Point(3, 0);
-            this.lblTable_select.Name = "lblTable_select";
-            this.lblTable_select.Size = new System.Drawing.Size(322, 25);
-            this.lblTable_select.TabIndex = 0;
-            this.lblTable_select.Text = "Veuillez entrer un numéro de table";
             // 
             // tlpMenu
             // 
@@ -326,14 +322,9 @@
             this.tlpMenu.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMenu.Location = new System.Drawing.Point(0, 0);
             this.tlpMenu.Name = "tlpMenu";
-            this.tlpMenu.RowCount = 6;
-            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3.483993F));
-            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 17.51412F));
-            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.91779F));
-            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.91779F));
-            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.78125F));
-            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15.26042F));
-            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpMenu.RowCount = 2;
+            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3.720322F));
+            this.tlpMenu.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 96.27968F));
             this.tlpMenu.Size = new System.Drawing.Size(1080, 1062);
             this.tlpMenu.TabIndex = 4;
             // 
@@ -349,7 +340,7 @@
             this.tlpMenuHeader.Name = "tlpMenuHeader";
             this.tlpMenuHeader.RowCount = 1;
             this.tlpMenuHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpMenuHeader.Size = new System.Drawing.Size(1074, 31);
+            this.tlpMenuHeader.Size = new System.Drawing.Size(1074, 33);
             this.tlpMenuHeader.TabIndex = 2;
             // 
             // lblMenu
@@ -359,7 +350,7 @@
             this.lblMenu.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMenu.Location = new System.Drawing.Point(3, 0);
             this.lblMenu.Name = "lblMenu";
-            this.lblMenu.Size = new System.Drawing.Size(231, 31);
+            this.lblMenu.Size = new System.Drawing.Size(231, 33);
             this.lblMenu.TabIndex = 0;
             this.lblMenu.Text = "Veuillez faire votre choix";
             // 
@@ -370,7 +361,7 @@
             this.btnMenuReturn.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMenuReturn.Location = new System.Drawing.Point(540, 3);
             this.btnMenuReturn.Name = "btnMenuReturn";
-            this.btnMenuReturn.Size = new System.Drawing.Size(531, 25);
+            this.btnMenuReturn.Size = new System.Drawing.Size(531, 27);
             this.btnMenuReturn.TabIndex = 2;
             this.btnMenuReturn.Text = "Retour";
             this.btnMenuReturn.UseVisualStyleBackColor = true;
@@ -522,6 +513,83 @@
             this.btnSettingsReturn.UseVisualStyleBackColor = true;
             this.btnSettingsReturn.Click += new System.EventHandler(this.btnReturn_Click);
             // 
+            // lblTable_select
+            // 
+            this.lblTable_select.AutoSize = true;
+            this.lblTable_select.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblTable_select.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTable_select.Location = new System.Drawing.Point(3, 227);
+            this.lblTable_select.Name = "lblTable_select";
+            this.lblTable_select.Size = new System.Drawing.Size(1074, 25);
+            this.lblTable_select.TabIndex = 1;
+            this.lblTable_select.Text = "Veuillez entrer un numéro de table";
+            this.lblTable_select.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tlpTable_selectNumber
+            // 
+            this.tlpTable_selectNumber.ColumnCount = 2;
+            this.tlpTable_selectNumber.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.96834F));
+            this.tlpTable_selectNumber.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 59.03166F));
+            this.tlpTable_selectNumber.Controls.Add(this.lblTable_selectNumber, 0, 0);
+            this.tlpTable_selectNumber.Controls.Add(this.txtTable_selectNumber, 1, 0);
+            this.tlpTable_selectNumber.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpTable_selectNumber.Location = new System.Drawing.Point(3, 255);
+            this.tlpTable_selectNumber.Name = "tlpTable_selectNumber";
+            this.tlpTable_selectNumber.RowCount = 1;
+            this.tlpTable_selectNumber.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpTable_selectNumber.Size = new System.Drawing.Size(1074, 227);
+            this.tlpTable_selectNumber.TabIndex = 3;
+            // 
+            // lblTable_selectNumber
+            // 
+            this.lblTable_selectNumber.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lblTable_selectNumber.AutoSize = true;
+            this.lblTable_selectNumber.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTable_selectNumber.Location = new System.Drawing.Point(176, 101);
+            this.lblTable_selectNumber.Name = "lblTable_selectNumber";
+            this.lblTable_selectNumber.Size = new System.Drawing.Size(86, 25);
+            this.lblTable_selectNumber.TabIndex = 2;
+            this.lblTable_selectNumber.Text = "Table N\'";
+            this.lblTable_selectNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtTable_selectNumber
+            // 
+            this.txtTable_selectNumber.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.txtTable_selectNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTable_selectNumber.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTable_selectNumber.Location = new System.Drawing.Point(442, 96);
+            this.txtTable_selectNumber.MinimumSize = new System.Drawing.Size(146, 27);
+            this.txtTable_selectNumber.Name = "txtTable_selectNumber";
+            this.txtTable_selectNumber.Size = new System.Drawing.Size(185, 35);
+            this.txtTable_selectNumber.TabIndex = 3;
+            this.txtTable_selectNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // btnTable_selectConfirm
+            // 
+            this.btnTable_selectConfirm.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnTable_selectConfirm.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTable_selectConfirm.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTable_selectConfirm.Location = new System.Drawing.Point(240, 583);
+            this.btnTable_selectConfirm.Name = "btnTable_selectConfirm";
+            this.btnTable_selectConfirm.Size = new System.Drawing.Size(599, 142);
+            this.btnTable_selectConfirm.TabIndex = 4;
+            this.btnTable_selectConfirm.Text = "Confirmer";
+            this.btnTable_selectConfirm.UseVisualStyleBackColor = true;
+            this.btnTable_selectConfirm.Click += new System.EventHandler(this.btnTable_selectConfirm_Click);
+            // 
+            // btnTable_selectReturn
+            // 
+            this.btnTable_selectReturn.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnTable_selectReturn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTable_selectReturn.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTable_selectReturn.Location = new System.Drawing.Point(359, 854);
+            this.btnTable_selectReturn.Name = "btnTable_selectReturn";
+            this.btnTable_selectReturn.Size = new System.Drawing.Size(361, 82);
+            this.btnTable_selectReturn.TabIndex = 5;
+            this.btnTable_selectReturn.Text = "Retour";
+            this.btnTable_selectReturn.UseVisualStyleBackColor = true;
+            this.btnTable_selectReturn.Click += new System.EventHandler(this.btnReturn_Click);
+            // 
             // accCuisine
             // 
             this.accCuisine.AddResizeBars = false;
@@ -594,14 +662,14 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1080, 1062);
             this.ControlBox = false;
-            this.Controls.Add(this.tlpCuisine);
             this.Controls.Add(this.tlpMenu);
+            this.Controls.Add(this.tlpTable_select);
+            this.Controls.Add(this.tlpCuisine);
             this.Controls.Add(this.tlpMenu_edit);
             this.Controls.Add(this.tlpServeur);
             this.Controls.Add(this.tlpSettings);
             this.Controls.Add(this.tlpOrder_confirmation);
             this.Controls.Add(this.tlpHome);
-            this.Controls.Add(this.tlpTable_select);
             this.Font = new System.Drawing.Font("Segoe UI", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -635,6 +703,8 @@
             this.tlpSettings.ResumeLayout(false);
             this.tlpSettingsHeader.ResumeLayout(false);
             this.tlpSettingsHeader.PerformLayout();
+            this.tlpTable_selectNumber.ResumeLayout(false);
+            this.tlpTable_selectNumber.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -653,7 +723,6 @@
         private System.Windows.Forms.TableLayoutPanel tlpCuisine;
         private System.Windows.Forms.Label lblCuisine;
         private System.Windows.Forms.TableLayoutPanel tlpTable_select;
-        private System.Windows.Forms.Label lblTable_select;
         private System.Windows.Forms.TableLayoutPanel tlpMenu;
         private System.Windows.Forms.Label lblMenu;
         private System.Windows.Forms.TableLayoutPanel tlpMenu_edit;
@@ -673,6 +742,12 @@
         private System.Windows.Forms.TableLayoutPanel tlpMenu_editHeader;
         private System.Windows.Forms.Button btnMenu_editReturn;
         private Opulos.Core.UI.Accordion accCuisine;
+        private System.Windows.Forms.TableLayoutPanel tlpTable_selectNumber;
+        private System.Windows.Forms.Label lblTable_selectNumber;
+        private System.Windows.Forms.Label lblTable_select;
+        private System.Windows.Forms.TextBox txtTable_selectNumber;
+        private System.Windows.Forms.Button btnTable_selectReturn;
+        private System.Windows.Forms.Button btnTable_selectConfirm;
     }
 }
 
