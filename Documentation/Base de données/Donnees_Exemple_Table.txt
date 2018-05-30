@@ -1,0 +1,5 @@
+INSERT INTO `cateasy_bd`.`Table` (`IDTable`) VALUES (1);
+INSERT INTO `cateasy_bd`.`Table` (`IDTable`) VALUES (2);
+INSERT INTO `cateasy_bd`.`Table` (`IDTable`) VALUES (3);
+INSERT INTO `cateasy_bd`.`Table` (`IDTable`) VALUES (4);
+INSERT INTO `cateasy_bd`.`Table` (`IDTable`) VALUES (5);

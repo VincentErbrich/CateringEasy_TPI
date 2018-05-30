@@ -1,0 +1,2 @@
+INSERT INTO `cateasy_bd`.`Order` (`IDOrder`, `FIDTable`, `Completed`, `Paid`) VALUES (1, 2, 0, 0);
+INSERT INTO `cateasy_bd`.`Order` (`IDOrder`, `FIDTable`, `Completed`, `Paid`) VALUES (2, 1, 0, 0);
