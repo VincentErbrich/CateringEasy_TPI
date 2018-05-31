@@ -26,11 +26,18 @@ namespace CateringEasy
             AutoSize = true,
             Name = "dgvMenu",
             RowHeadersVisible = false,
+            
         };
+
         //String property indicating from which TableLayoutPanel the display of the currently displayed TableLayoutPanel has been ordered
         private TableLayoutPanel RedirectedFromTlp { get; set; }
+        private TableLayoutPanel CurrentlyDisplayedTlp { get; set; }
+
+        private static DatabaseManager Db;
 
         private bool Waiter { get; set; }
+
+        private bool MenuBuilt { get; set; }
         //int property indicating which table number was last selected
         private Int16 SelectedTable { get; set; }
 
@@ -40,6 +47,9 @@ namespace CateringEasy
         public FormMain()
         {
             InitializeComponent();
+            Db = new DatabaseManager();
+            Db.Connexion();
+            Db.DatabaseUpdated += DatabaseUpdated;
         }
         /*
          * Load event handler method for this Form. Shows the home panel and loads images from the database
@@ -48,8 +58,8 @@ namespace CateringEasy
         {
             ShowTableLayoutPanel(tlpHome, tlpHome);
             MenuImages.LoadMenuImages();
-            DatabaseManager db = new DatabaseManager();
-            db.Connexion();
+            MenuBuilt = false;
+            txtTable_selectNumber.MaxLength = 255;
         }
         /*
          * This method requests the HideAllPanels method to hide every TableLayoutPanel, then shows the TableLayoutPanel requested in parameter tlp.
@@ -57,6 +67,7 @@ namespace CateringEasy
         private void ShowTableLayoutPanel(TableLayoutPanel tlpToShow, TableLayoutPanel tlpCurrent)
         {
             RedirectedFromTlp = tlpCurrent;
+            CurrentlyDisplayedTlp = tlpToShow;
             HideAllPanels();
             tlpToShow.Show();
         }
@@ -72,96 +83,80 @@ namespace CateringEasy
         }
         private void BuildMenuList(bool edit)
         {
-
-            dgvMenu.Rows.Clear();
-            dgvMenu.Columns.Clear();
-            dgvMenu.ColumnCount = 2;
-            //string[] imagekeys = new string[imlMenu.Images.Count];
-            //imlMenu.Images.Keys.CopyTo(imagekeys, 0);
-            /*DataGridView dgvMenu = new DataGridView
+            if(!MenuBuilt)
             {
-                Dock = DockStyle.Fill,
-                Anchor = AnchorStyles.Top,
-                Name = "dgvMenu",
-                ColumnCount = 2
-            };*/
+                dgvMenu.ColumnCount = 2;
+                dgvMenu.Columns[0].Name = "Nom";
+                dgvMenu.Columns[1].Name = "Prix";
+                dgvMenu.Columns[0].ReadOnly = true;
+                dgvMenu.Columns[1].ReadOnly = true;
 
-            dgvMenu.Columns[0].Name ="Nom";
-            dgvMenu.Columns[1].Name ="Prix";
-            dgvMenu.Columns[0].ReadOnly = true;
-            dgvMenu.Columns[1].ReadOnly = true;
-
-
-            DatabaseManager db = new DatabaseManager();
-            db.Connexion();
-
-            if (edit)
-            {
-                DataGridViewTextBoxColumn dgtStock = new DataGridViewTextBoxColumn();
-                dgtStock.Name = "dgtStock";
-                dgtStock.DefaultCellStyle.NullValue = "0";
-                dgtStock.HeaderText = "Quantité";
-                dgvMenu.Columns.Insert(2, dgtStock);
-            }
-            else
-            {
-                string Currency = "CHF";
-                MySqlDataReader readerCurrency = db.SqlRequest("SELECT Currency FROM cateasy_bd.settings;");
-
-                try
+                if (edit)
                 {
-                    if (readerCurrency.HasRows)
+                    DataGridViewTextBoxColumn dgtStock = new DataGridViewTextBoxColumn();
+                    dgtStock.Name = "dgtStock";
+                    dgtStock.DefaultCellStyle.NullValue = "0";
+                    dgtStock.HeaderText = "Quantité";
+                    dgvMenu.Columns.Insert(2, dgtStock);
+                }
+                else
+                {
+                    string Currency = "CHF";
+                    MySqlDataReader readerCurrency = Db.SqlRequest("SELECT Currency FROM cateasy_bd.settings;");
+
+                    try
                     {
-                        while (readerCurrency.Read())
+                        if (readerCurrency.HasRows)
                         {
-                            Currency = readerCurrency.GetValue(0).ToString();
+                            while (readerCurrency.Read())
+                            {
+                                Currency = readerCurrency.GetValue(0).ToString();
+                            }
                         }
                     }
-                }
-                catch { }
+                    catch { }
 
-                MySqlDataReader readerMenu = db.SqlRequest("SELECT Name, Price FROM cateasy_bd.MenuItem WHERE Remaining > 1");
-                try
-                {
-                    if (readerMenu.HasRows)
+                    MySqlDataReader readerMenu = Db.SqlRequest("SELECT Name, Price FROM cateasy_bd.MenuItem WHERE Remaining > 1");
+                    try
                     {
-                        while (readerMenu.Read())
+                        if (readerMenu.HasRows)
                         {
-                            Object[] values = new Object[readerMenu.FieldCount];
-                            int fieldCount = readerMenu.GetValues(values);
-                            dgvMenu.Rows.Add(values[0].ToString(), values[1] + Currency);
+                            while (readerMenu.Read())
+                            {
+                                Object[] values = new Object[readerMenu.FieldCount];
+                                int fieldCount = readerMenu.GetValues(values);
+                                dgvMenu.Rows.Add(values[0].ToString(), values[1] + Currency);
+                            }
                         }
+
+                        DataGridViewButtonColumn dgbAddColumn = new DataGridViewButtonColumn();
+                        dgbAddColumn.HeaderText = "Ajouter";
+                        dgbAddColumn.Text = "+";
+                        dgbAddColumn.UseColumnTextForButtonValue = true;
+                        dgvMenu.Columns.Insert(2, dgbAddColumn);
+
+                        DataGridViewTextBoxColumn dgtSelected = new DataGridViewTextBoxColumn();
+                        dgtSelected.Name = "dgtSelected";
+                        dgtSelected.DefaultCellStyle.NullValue = "0";
+                        dgtSelected.HeaderText = "";
+                        dgvMenu.Columns.Insert(3, dgtSelected);
+
+                        DataGridViewButtonColumn dgbRemoveColumn = new DataGridViewButtonColumn();
+                        dgbRemoveColumn.HeaderText = "Retirer";
+                        dgbRemoveColumn.Text = "-";
+                        dgbRemoveColumn.UseColumnTextForButtonValue = true;
+                        dgvMenu.Columns.Insert(4, dgbRemoveColumn);
+
                     }
-
-                    DataGridViewButtonColumn dgbAddColumn = new DataGridViewButtonColumn();
-                    dgbAddColumn.HeaderText = "Ajouter";
-                    dgbAddColumn.Text = "+";
-                    dgbAddColumn.UseColumnTextForButtonValue = true;
-                    dgvMenu.Columns.Insert(2, dgbAddColumn);
-
-                    DataGridViewTextBoxColumn dgtSelected = new DataGridViewTextBoxColumn();
-                    dgtSelected.Name = "dgtSelected";
-                    dgtSelected.DefaultCellStyle.NullValue = "0";
-                    dgtSelected.HeaderText = "";
-                    dgvMenu.Columns.Insert(3, dgtSelected);
-
-                    DataGridViewButtonColumn dgbRemoveColumn = new DataGridViewButtonColumn();
-                    dgbRemoveColumn.HeaderText = "Retirer";
-                    dgbRemoveColumn.Text = "-";
-                    dgbRemoveColumn.UseColumnTextForButtonValue = true;
-                    dgvMenu.Columns.Insert(4, dgbRemoveColumn);
-
+                    catch (Exception e)
+                    {
+                        ExceptionManager.NewException(e, "Nous avons rencontré un problème lors de la construction du menu. Veuillez contacter le support technique", true);
+                    }
+                    dgvMenu.CellContentClick += new DataGridViewCellEventHandler(dgvMenu_CellContentClick);
                 }
-                catch (Exception e)
-                {
-                    ExceptionManager.NewException(e, "Nous avons rencontré un problème lors de la construction du menu. Veuillez contacter le support technique", true);
-                }
-                dgvMenu.CellContentClick += new DataGridViewCellEventHandler(dgvMenu_CellContentClick);
+                MenuBuilt = true;
+                tlpMenu.Controls.Add(dgvMenu);
             }
-
-            tlpMenu.Controls.Add(dgvMenu);
-            
-            
         }
         private void dgvMenu_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -192,9 +187,9 @@ namespace CateringEasy
                 break;
             }
             Accordion accCuisine = BuildOrdersAccordion();
-            DatabaseManager db = new DatabaseManager();
-            db.Connexion();
-            MySqlDataReader readerOrder = db.SqlRequest("SELECT * FROM cateasy_bd.order WHERE Completed = false;");
+            
+            
+            MySqlDataReader readerOrder = Db.SqlRequest("SELECT * FROM cateasy_bd.order WHERE Completed = false;");
             try
             {
                 if (readerOrder.HasRows)
@@ -207,7 +202,7 @@ namespace CateringEasy
                         {
                             Panel pnl = new Panel { Dock = DockStyle.Fill };
 
-                            MySqlDataReader readerOrderItems = db.SqlRequest("SELECT IDMenuItem, Name FROM cateasy_bd.order_mitems RIGHT JOIN cateasy_bd.menuitem ON FIDMenuItem = IDMenuItem WHERE 'Completed' IS FALSE AND FIDOrder = " + readerOrder.GetValue(0) + ";");
+                            MySqlDataReader readerOrderItems = Db.SqlRequest("SELECT IDMenuItem, Name, IDOrder_Mitem FROM cateasy_bd.order_mitems RIGHT JOIN cateasy_bd.menuitem ON FIDMenuItem = IDMenuItem WHERE 'Completed' IS FALSE AND FIDOrder = " + readerOrder.GetValue(0) + ";");
                             if (readerOrderItems.HasRows)
                             {
                                 int j = 0;
@@ -222,7 +217,7 @@ namespace CateringEasy
                                         BackColor = Color.OrangeRed,
                                         Dock = DockStyle.Fill,
                                         Text = "Supprimmer",
-                                        Name = "btnDeleteItem" + j.ToString()
+                                        Name = "btnDeleteItem_Order" + readerOrder.GetValue(2),
                                     };
                                     btnDeleteItem.Click += new EventHandler(btnDeleteItem_Click);
 
@@ -274,15 +269,59 @@ namespace CateringEasy
                 ExceptionManager.NewException(e, "Erreur lors du chargement des commandes. Veuillez contacter le support technique", false);
             }
         }
+        private void BuildWaiterHome()
+        {
+            BuildWaiterOrdersTableLayoutPanel();
+            BuildWaiterDrinksInStandbyTableLayoutPanel();
+        }
+        
+        private void BuildWaiterOrdersTableLayoutPanel()
+        {
+            tlpWaiterDrinksInStandby.RowCount = 1;
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, IDOrder FROM cateasy_bd.order WHERE Completed = true AND Delivered = false;");
+
+            try
+            {
+                if(reader.HasRows)
+                {
+                    while(reader.Read())
+                    {
+                        tlpWaiterDrinksInStandby.RowCount++;
+                        tlp
+                        Button btnDeleteItem = new Button
+                        {
+                            Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point),
+                            BackColor = Color.OrangeRed,
+                            Dock = DockStyle.Fill,
+                            Text = "Supprimmer",
+                            Name = "btnDeleteOrder" + reader.GetValue(1),
+                        };
+                        btnDeleteItem.Click += new EventHandler(btnDeleteItem_Click);
+
+                        tlpWaiterDrinksInStandby.Controls.Add(new Label { Text = "Table " + reader.GetValue(0).ToString() + " Commande " + reader.GetValue(1).ToString() }, 0, tlpWaiter.RowCount);
+                        tlpWaiterDrinksInStandby.Controls.Add(btnDeleteItem);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                ExceptionManager.NewException(e, "Un problème est survenu lors du chargement des commandes à livrer. Veuillez contacter le support technique", true);
+            }
+            while (reader.Read())
+            {
+
+            }
+        }
+
+        private void BuildWaiterDrinksInStandbyTableLayoutPanel()
+        {
+
+        }
 
         private void btnDeleteItem_Click(object sender, EventArgs e)
         {
-            DatabaseManager db = new DatabaseManager();
-            db.Connexion();
-
             Button btn = sender as Button;
-            db.SqlRequest("");
-            //btn.Parent.Name;
+            Db.SqlRequest("DELETE FROM cateasy_bd.order_mitems WHERE IDOrder_MItem = " + Regex.Match(btn.Name, @"\d+$"));
         }
 
         private static Accordion BuildOrdersAccordion()
@@ -364,10 +403,11 @@ namespace CateringEasy
             ShowTableLayoutPanel(tlpSettings, tlpHome);
         }
 
-        private void btnHomeServeur_Click(object sender, EventArgs e)
+        private void btnHomeWaiter_Click(object sender, EventArgs e)
         {
             Waiter = true;
-            ShowTableLayoutPanel(tlpServeur, tlpHome);
+            BuildWaiterHome();
+            ShowTableLayoutPanel(tlpWaiter, tlpHome);
         }
         private void btnHomeClient_Click(object sender, EventArgs e)
         {
@@ -385,7 +425,16 @@ namespace CateringEasy
          */
         private void btnReturn_Click(object sender, EventArgs e)
         {
-            ShowTableLayoutPanel(RedirectedFromTlp, tlpSettings);
+            if(CurrentlyDisplayedTlp.Name == tlpMenu.Name && Waiter)
+            {
+                ShowTableLayoutPanel(tlpWaiter, CurrentlyDisplayedTlp);
+            }
+            else if (CurrentlyDisplayedTlp.Name == tlpMenu.Name && !Waiter)
+            {
+                ShowTableLayoutPanel(tlpTable_select, CurrentlyDisplayedTlp);
+            }
+            else
+                ShowTableLayoutPanel(RedirectedFromTlp, CurrentlyDisplayedTlp);
         }
         /*
          * Event handler method for Click event on buttons generated dynamically for the Cuisine order panel.
@@ -394,39 +443,26 @@ namespace CateringEasy
         private void btnOrder_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            DatabaseManager db = new DatabaseManager();
-            db.Connexion();
+            
+            
             try
             {
                 if (Regex.IsMatch(btn.Name, "btnOrderStarted*"))
                 {
-                    db.SqlRequest("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    UpdateStock(Regex.Match(btn.Name, @"\d+$").Value.ToString());
+                    Db.SqlRequest("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
                     btn.Enabled = false;
                 }
                 else if (Regex.IsMatch(btn.Name, "btnOrderEnded*"))
                 {
-                    db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
-                    MySqlDataReader reader = db.SqlRequest("SELECT FIDMenuItem FROM cateasy_bd.order LEFT JOIN cateasy_bd.order_mitems ON IDOrder = FIDOrder WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
-                    try
-                    {
-                        if(reader.HasRows)
-                        {
-                            while(reader.Read())
-                            {
-                                db.SqlRequest("UPDATE cateasy_bd.menuitem SET Remaining = Remaining - 1 WHERE IDMenuItem = " + reader.GetValue(0) + ";");
-                            }
-                            reader.Close();
-                        }
-                    }
-                    catch(Exception ex2)
-                    {
-                        ExceptionManager.NewException(ex2, "Nous avons rencontré un problème lors de la mise à jour du stock. Veuillez contacter le support technique", true);
-                    }
+                    MySqlDataReader reader = Db.SqlRequest("SELECT Started WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    if(Convert.ToInt16(reader.GetValue(0)) == 0)
+                        UpdateStock(Regex.Match(btn.Name, @"\d+$").Value.ToString());
                     BuildCuisineHome();
                 }
                 else if (Regex.IsMatch(btn.Name, "btnOrderDelete*"))
                 {
-                    db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true, Paid = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    Db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true, Paid = true, Delivered = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
                     BuildCuisineHome();
                 }
             }
@@ -435,17 +471,37 @@ namespace CateringEasy
                 ExceptionManager.NewException(ex, "Nous avons rencontré un problème lors de la mise à jour de la commande. Veuillez contacter le support technique.", false);
             }
         }
+
+        private static void UpdateStock(string idorder)
+        {
+            Db.SqlRequest("UPDATE cateasy_bd.order SET Started = true, Completed = true WHERE IDOrder = " + idorder + ";");
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDMenuItem FROM cateasy_bd.order LEFT JOIN cateasy_bd.order_mitems ON IDOrder = FIDOrder WHERE IDOrder = " + idorder + ";");
+            try
+            {
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        Db.SqlRequest("UPDATE cateasy_bd.menuitem SET Remaining = Remaining - 1 WHERE IDMenuItem = " + reader.GetValue(0) + ";");
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception ex2)
+            {
+                ExceptionManager.NewException(ex2, "Nous avons rencontré un problème lors de la mise à jour du stock. Veuillez contacter le support technique", true);
+            }
+        }
+
         /*
-         * Event handler method for Click event on the confirm table number button
-         * Redirects to the menu and saves the table number.
-         */
+* Event handler method for Click event on the confirm table number button
+* Redirects to the menu and saves the table number.
+*/
         private void btnTable_selectConfirm_Click(object sender, EventArgs e)
         {
             try
             {
-                DatabaseManager db = new DatabaseManager();
-                db.Connexion();
-                MySqlDataReader reader = db.SqlRequest("SELECT IDTable FROM cateasy_bd.table ORDER BY IDTable DESC;");
+                MySqlDataReader reader = Db.SqlRequest("SELECT IDTable FROM cateasy_bd.table ORDER BY IDTable DESC;");
 
                 SelectedTable = Convert.ToInt16(txtTable_selectNumber.Text);
 
@@ -478,8 +534,8 @@ namespace CateringEasy
 
         private void btnMenuConfirm_Click(object sender, EventArgs e)
         {
-            DatabaseManager db = new DatabaseManager();
-            db.Connexion();
+            
+            
             string valuesToInsert = "";
             bool orderCreated = false;
             bool itemSelected = false;
@@ -492,7 +548,7 @@ namespace CateringEasy
                     //If a menu item has been selected and the order has not been created yet, inserts a new order in the database and saves the autoincremented id of the order in the orderId Int16 varialble.
                     if(!orderCreated)
                     {
-                        MySqlDataReader reader = db.SqlRequest("INSERT INTO cateasy_bd.order(FIDTable, Completed, Started) VALUES(" + SelectedTable.ToString() + ", false, false); SELECT LAST_INSERT_ID();");
+                        MySqlDataReader reader = Db.SqlRequest("INSERT INTO cateasy_bd.order(FIDTable) VALUES(" + SelectedTable.ToString() + "); SELECT LAST_INSERT_ID();");
                         try
                         {
                             if (reader.HasRows)
@@ -521,7 +577,7 @@ namespace CateringEasy
                         try
                         {
                             //Gets the remaining stock of the item in the current row
-                            MySqlDataReader readerStock = db.SqlRequest("SELECT Remaining FROM cateasy_bd.menuitem WHERE IDMenuItem = " + (row.Index + 1) + ";");
+                            MySqlDataReader readerStock = Db.SqlRequest("SELECT Remaining FROM cateasy_bd.menuitem WHERE IDMenuItem = " + (row.Index + 1) + ";");
                             if (readerStock.Read() && readerStock.HasRows)
                             {
                                 if (i < Convert.ToInt16(readerStock.GetValue(0).ToString()))
@@ -547,7 +603,7 @@ namespace CateringEasy
             if(itemSelected)
             {
                 MessageBox.Show(valuesToInsert);
-                db.SqlRequest(valuesToInsert);
+                Db.SqlRequest(valuesToInsert);
                 BuildTlpOrderConfirm(Waiter);
                 ShowTableLayoutPanel(tlpOrder_confirmation, tlpMenu);
                 btnMenuConfirm.Text = "Confirmer";
@@ -574,7 +630,7 @@ namespace CateringEasy
                         tlpOrder_confirmation.Controls.Remove(c);
                         break;
                     }
-                    else if (c.Name == "btnServeurReturn")
+                    else if (c.Name == "btnWaiterReturn")
                     {
                         alreadyBuilt = true;
                         break;
@@ -587,7 +643,7 @@ namespace CateringEasy
                         Dock = DockStyle.Bottom,
                         Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
                         Location = new Point(3, 948),
-                        Name = "btnServeurReturn",
+                        Name = "btnWaiterReturn",
                         Size = new Size(1074, 111),
                         TabIndex = 2,
                         Text = "OK",
@@ -602,7 +658,7 @@ namespace CateringEasy
                 bool alreadyBuilt = false;
                 foreach (Control c in tlpOrder_confirmation.Controls)
                 {
-                    if (c.Name == "btnServeurReturn")
+                    if (c.Name == "btnWaiterReturn")
                     {
                         tlpOrder_confirmation.Controls.Remove(c);
                         break;
@@ -680,7 +736,7 @@ namespace CateringEasy
         }
         private void btnReturnToHome_Click(object sender, EventArgs e)
         {
-            ShowTableLayoutPanel(tlpServeur, tlpOrder_confirmation);
+            ShowTableLayoutPanel(tlpWaiter, tlpOrder_confirmation);
         }
         private void btnReturnToHomeProtection_Click(object sender, EventArgs e)
         {
@@ -707,6 +763,23 @@ namespace CateringEasy
                 break;
             }
              
+        }
+        private void btnWaiterNewOrder_Click(object sender, EventArgs e)
+        {
+            BuildMenuList(false);
+            ShowTableLayoutPanel(tlpMenu, tlpWaiter);
+        }
+
+        private void DatabaseUpdated(object sender, EventArgs e)
+        {
+            if(CurrentlyDisplayedTlp == tlpCuisine)
+            {
+                BuildCuisineHome();
+            }
+            if(CurrentlyDisplayedTlp == tlpWaiter)
+            {
+                BuildWaiterHome();
+            }
         }
     }
 }

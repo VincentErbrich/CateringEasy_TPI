@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order` (
   `Completed` TINYINT(1) NOT NULL DEFAULT 0,
   `Paid` TINYINT(1) NOT NULL DEFAULT 0,
   `Started` TINYINT(1) NOT NULL DEFAULT 0,
+  `Delivered` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`IDOrder`),
   INDEX `fk_Order_Table_idx` (`FIDTable` ASC),
   CONSTRAINT `fk_Order_Table`
@@ -67,24 +68,26 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Settings` (
 -- -----------------------------------------------------
 -- Table `cateasy_bd`.`Order_MItems`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order_MItems` (
-  `FIDMenuItem` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `mydb`.`Order_MItems` (
+  `IDOrder_Mitems` INT NOT NULL AUTO_INCREMENT,
   `FIDOrder` INT NOT NULL,
-  `Completed` TINYINT(1) NOT NULL DEFAULT 0,
-  `Paid` TINYINT(1) NOT NULL DEFAULT 0,
+  `FIDMenuItem` INT NOT NULL,
+  `Delivered` TINYINT(1) NOT NULL,
+  `Paid` TINYINT(1) NOT NULL,
   INDEX `fk_Order_MItems_MenuItem1_idx` (`FIDMenuItem` ASC),
   INDEX `fk_Order_MItems_Order1_idx` (`FIDOrder` ASC),
+  UNIQUE INDEX `IDOrder_Mitems_UNIQUE` (`IDOrder_Mitems` ASC),
+  PRIMARY KEY (`IDOrder_Mitems`),
   CONSTRAINT `fk_Order_MItems_MenuItem1`
     FOREIGN KEY (`FIDMenuItem`)
-    REFERENCES `cateasy_bd`.`MenuItem` (`IDMenuItem`)
+    REFERENCES `mydb`.`MenuItem` (`IDMenuItem`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_MItems_Order1`
     FOREIGN KEY (`FIDOrder`)
-    REFERENCES `cateasy_bd`.`Order` (`IDOrder`)
+    REFERENCES `mydb`.`Order` (`IDOrder`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

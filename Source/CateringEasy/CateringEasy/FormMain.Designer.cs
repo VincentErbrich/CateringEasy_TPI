@@ -35,12 +35,18 @@
             this.btnHomeCuisine = new System.Windows.Forms.Button();
             this.btnHomeClient = new System.Windows.Forms.Button();
             this.lblHome = new System.Windows.Forms.Label();
-            this.btnHomeServeur = new System.Windows.Forms.Button();
+            this.btnHomeWaiter = new System.Windows.Forms.Button();
             this.pctHomeSettings = new System.Windows.Forms.PictureBox();
-            this.tlpServeur = new System.Windows.Forms.TableLayoutPanel();
-            this.tlpServeurHeader = new System.Windows.Forms.TableLayoutPanel();
-            this.lblServeur = new System.Windows.Forms.Label();
-            this.btnServeurReturn = new System.Windows.Forms.Button();
+            this.tlpWaiter = new System.Windows.Forms.TableLayoutPanel();
+            this.tlpWaiterDrinksInStandby = new System.Windows.Forms.TableLayoutPanel();
+            this.lblWaiterDrinksInStandby = new System.Windows.Forms.Label();
+            this.tlpWaiterOrdersCompleted = new System.Windows.Forms.TableLayoutPanel();
+            this.lblWaiterOrdersCompleted = new System.Windows.Forms.Label();
+            this.btnWaiterReturn = new System.Windows.Forms.Button();
+            this.btnWaiterNewOrder = new System.Windows.Forms.Button();
+            this.tlpWaiterNewBill = new System.Windows.Forms.Button();
+            this.tlpWaiterHeader = new System.Windows.Forms.TableLayoutPanel();
+            this.lblWaiter = new System.Windows.Forms.Label();
             this.tlpCuisine = new System.Windows.Forms.TableLayoutPanel();
             this.tlpCuisineHeader = new System.Windows.Forms.TableLayoutPanel();
             this.lblCuisine = new System.Windows.Forms.Label();
@@ -70,8 +76,10 @@
             this.btnSettingsReturn = new System.Windows.Forms.Button();
             this.tlpHome.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctHomeSettings)).BeginInit();
-            this.tlpServeur.SuspendLayout();
-            this.tlpServeurHeader.SuspendLayout();
+            this.tlpWaiter.SuspendLayout();
+            this.tlpWaiterDrinksInStandby.SuspendLayout();
+            this.tlpWaiterOrdersCompleted.SuspendLayout();
+            this.tlpWaiterHeader.SuspendLayout();
             this.tlpCuisine.SuspendLayout();
             this.tlpCuisineHeader.SuspendLayout();
             this.tlpTable_select.SuspendLayout();
@@ -98,7 +106,7 @@
             this.tlpHome.Controls.Add(this.btnHomeCuisine, 0, 3);
             this.tlpHome.Controls.Add(this.btnHomeClient, 0, 2);
             this.tlpHome.Controls.Add(this.lblHome, 0, 0);
-            this.tlpHome.Controls.Add(this.btnHomeServeur, 0, 1);
+            this.tlpHome.Controls.Add(this.btnHomeWaiter, 0, 1);
             this.tlpHome.Controls.Add(this.pctHomeSettings, 0, 5);
             this.tlpHome.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpHome.Location = new System.Drawing.Point(0, 0);
@@ -153,19 +161,19 @@
             this.lblHome.TabIndex = 0;
             this.lblHome.Text = "Qui va utiliser la tablette ?";
             // 
-            // btnHomeServeur
+            // btnHomeWaiter
             // 
-            this.btnHomeServeur.AutoSize = true;
-            this.btnHomeServeur.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnHomeServeur.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHomeServeur.Font = new System.Drawing.Font("Segoe UI", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnHomeServeur.Location = new System.Drawing.Point(3, 28);
-            this.btnHomeServeur.Name = "btnHomeServeur";
-            this.btnHomeServeur.Size = new System.Drawing.Size(1074, 194);
-            this.btnHomeServeur.TabIndex = 1;
-            this.btnHomeServeur.Text = "Serveur";
-            this.btnHomeServeur.UseVisualStyleBackColor = true;
-            this.btnHomeServeur.Click += new System.EventHandler(this.btnHomeServeur_Click);
+            this.btnHomeWaiter.AutoSize = true;
+            this.btnHomeWaiter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnHomeWaiter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHomeWaiter.Font = new System.Drawing.Font("Segoe UI", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHomeWaiter.Location = new System.Drawing.Point(3, 28);
+            this.btnHomeWaiter.Name = "btnHomeWaiter";
+            this.btnHomeWaiter.Size = new System.Drawing.Size(1074, 194);
+            this.btnHomeWaiter.TabIndex = 1;
+            this.btnHomeWaiter.Text = "Serveur";
+            this.btnHomeWaiter.UseVisualStyleBackColor = true;
+            this.btnHomeWaiter.Click += new System.EventHandler(this.btnHomeWaiter_Click);
             // 
             // pctHomeSettings
             // 
@@ -179,63 +187,146 @@
             this.pctHomeSettings.TabStop = false;
             this.pctHomeSettings.Click += new System.EventHandler(this.pctHomeSettings_Click);
             // 
-            // tlpServeur
+            // tlpWaiter
             // 
-            this.tlpServeur.ColumnCount = 1;
-            this.tlpServeur.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpServeur.Controls.Add(this.tlpServeurHeader, 0, 0);
-            this.tlpServeur.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpServeur.Location = new System.Drawing.Point(0, 0);
-            this.tlpServeur.Name = "tlpServeur";
-            this.tlpServeur.RowCount = 6;
-            this.tlpServeur.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3.389831F));
-            this.tlpServeur.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 17.60829F));
-            this.tlpServeur.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.91779F));
-            this.tlpServeur.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.91779F));
-            this.tlpServeur.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.78125F));
-            this.tlpServeur.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15.26042F));
-            this.tlpServeur.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpServeur.Size = new System.Drawing.Size(1080, 1062);
-            this.tlpServeur.TabIndex = 1;
+            this.tlpWaiter.ColumnCount = 1;
+            this.tlpWaiter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpWaiter.Controls.Add(this.tlpWaiterDrinksInStandby, 0, 2);
+            this.tlpWaiter.Controls.Add(this.tlpWaiterOrdersCompleted, 0, 1);
+            this.tlpWaiter.Controls.Add(this.btnWaiterReturn, 0, 5);
+            this.tlpWaiter.Controls.Add(this.btnWaiterNewOrder, 0, 3);
+            this.tlpWaiter.Controls.Add(this.tlpWaiterNewBill, 0, 4);
+            this.tlpWaiter.Controls.Add(this.tlpWaiterHeader, 0, 0);
+            this.tlpWaiter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpWaiter.Location = new System.Drawing.Point(0, 0);
+            this.tlpWaiter.Name = "tlpWaiter";
+            this.tlpWaiter.RowCount = 6;
+            this.tlpWaiter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.025126F));
+            this.tlpWaiter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 32.66331F));
+            this.tlpWaiter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 32.66331F));
+            this.tlpWaiter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
+            this.tlpWaiter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
+            this.tlpWaiter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.025126F));
+            this.tlpWaiter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpWaiter.Size = new System.Drawing.Size(1080, 1062);
+            this.tlpWaiter.TabIndex = 1;
             // 
-            // tlpServeurHeader
+            // tlpWaiterDrinksInStandby
             // 
-            this.tlpServeurHeader.ColumnCount = 2;
-            this.tlpServeurHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpServeurHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpServeurHeader.Controls.Add(this.lblServeur, 0, 0);
-            this.tlpServeurHeader.Controls.Add(this.btnServeurReturn, 1, 0);
-            this.tlpServeurHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpServeurHeader.Location = new System.Drawing.Point(3, 3);
-            this.tlpServeurHeader.Name = "tlpServeurHeader";
-            this.tlpServeurHeader.RowCount = 1;
-            this.tlpServeurHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpServeurHeader.Size = new System.Drawing.Size(1074, 30);
-            this.tlpServeurHeader.TabIndex = 1;
+            this.tlpWaiterDrinksInStandby.ColumnCount = 1;
+            this.tlpWaiterDrinksInStandby.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpWaiterDrinksInStandby.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpWaiterDrinksInStandby.Controls.Add(this.lblWaiterDrinksInStandby, 0, 0);
+            this.tlpWaiterDrinksInStandby.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpWaiterDrinksInStandby.Location = new System.Drawing.Point(3, 402);
+            this.tlpWaiterDrinksInStandby.Name = "tlpWaiterDrinksInStandby";
+            this.tlpWaiterDrinksInStandby.RowCount = 1;
+            this.tlpWaiterDrinksInStandby.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpWaiterDrinksInStandby.Size = new System.Drawing.Size(1074, 340);
+            this.tlpWaiterDrinksInStandby.TabIndex = 8;
             // 
-            // lblServeur
+            // lblWaiterDrinksInStandby
             // 
-            this.lblServeur.AutoSize = true;
-            this.lblServeur.Dock = System.Windows.Forms.DockStyle.Left;
-            this.lblServeur.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblServeur.Location = new System.Drawing.Point(3, 0);
-            this.lblServeur.Name = "lblServeur";
-            this.lblServeur.Size = new System.Drawing.Size(149, 30);
-            this.lblServeur.TabIndex = 0;
-            this.lblServeur.Text = "Accueil Serveur";
+            this.lblWaiterDrinksInStandby.AutoSize = true;
+            this.lblWaiterDrinksInStandby.Dock = System.Windows.Forms.DockStyle.Left;
+            this.lblWaiterDrinksInStandby.Font = new System.Drawing.Font("Segoe UI Semibold", 10.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWaiterDrinksInStandby.Location = new System.Drawing.Point(3, 0);
+            this.lblWaiterDrinksInStandby.Name = "lblWaiterDrinksInStandby";
+            this.lblWaiterDrinksInStandby.Size = new System.Drawing.Size(130, 340);
+            this.lblWaiterDrinksInStandby.TabIndex = 0;
+            this.lblWaiterDrinksInStandby.Text = "Boissons en attente";
             // 
-            // btnServeurReturn
+            // tlpWaiterOrdersCompleted
             // 
-            this.btnServeurReturn.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnServeurReturn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnServeurReturn.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnServeurReturn.Location = new System.Drawing.Point(540, 3);
-            this.btnServeurReturn.Name = "btnServeurReturn";
-            this.btnServeurReturn.Size = new System.Drawing.Size(531, 24);
-            this.btnServeurReturn.TabIndex = 2;
-            this.btnServeurReturn.Text = "Retour";
-            this.btnServeurReturn.UseVisualStyleBackColor = true;
-            this.btnServeurReturn.Click += new System.EventHandler(this.btnReturn_Click);
+            this.tlpWaiterOrdersCompleted.AutoSize = true;
+            this.tlpWaiterOrdersCompleted.ColumnCount = 3;
+            this.tlpWaiterOrdersCompleted.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tlpWaiterOrdersCompleted.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tlpWaiterOrdersCompleted.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.5F));
+            this.tlpWaiterOrdersCompleted.Controls.Add(this.lblWaiterOrdersCompleted, 0, 0);
+            this.tlpWaiterOrdersCompleted.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpWaiterOrdersCompleted.Location = new System.Drawing.Point(3, 56);
+            this.tlpWaiterOrdersCompleted.Name = "tlpWaiterOrdersCompleted";
+            this.tlpWaiterOrdersCompleted.RowCount = 1;
+            this.tlpWaiterOrdersCompleted.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpWaiterOrdersCompleted.Size = new System.Drawing.Size(1074, 340);
+            this.tlpWaiterOrdersCompleted.TabIndex = 7;
+            // 
+            // lblWaiterOrdersCompleted
+            // 
+            this.lblWaiterOrdersCompleted.AutoSize = true;
+            this.lblWaiterOrdersCompleted.Dock = System.Windows.Forms.DockStyle.Left;
+            this.lblWaiterOrdersCompleted.Font = new System.Drawing.Font("Segoe UI Semibold", 10.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWaiterOrdersCompleted.Location = new System.Drawing.Point(3, 0);
+            this.lblWaiterOrdersCompleted.Name = "lblWaiterOrdersCompleted";
+            this.lblWaiterOrdersCompleted.Size = new System.Drawing.Size(128, 340);
+            this.lblWaiterOrdersCompleted.TabIndex = 0;
+            this.lblWaiterOrdersCompleted.Text = "Commandes prêtes";
+            // 
+            // btnWaiterReturn
+            // 
+            this.btnWaiterReturn.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnWaiterReturn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnWaiterReturn.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnWaiterReturn.Location = new System.Drawing.Point(3, 1008);
+            this.btnWaiterReturn.Name = "btnWaiterReturn";
+            this.btnWaiterReturn.Size = new System.Drawing.Size(1074, 51);
+            this.btnWaiterReturn.TabIndex = 6;
+            this.btnWaiterReturn.Text = "Retour";
+            this.btnWaiterReturn.UseVisualStyleBackColor = true;
+            this.btnWaiterReturn.Click += new System.EventHandler(this.btnReturn_Click);
+            // 
+            // btnWaiterNewOrder
+            // 
+            this.btnWaiterNewOrder.AutoSize = true;
+            this.btnWaiterNewOrder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnWaiterNewOrder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnWaiterNewOrder.Font = new System.Drawing.Font("Segoe UI", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnWaiterNewOrder.Location = new System.Drawing.Point(3, 748);
+            this.btnWaiterNewOrder.Name = "btnWaiterNewOrder";
+            this.btnWaiterNewOrder.Size = new System.Drawing.Size(1074, 124);
+            this.btnWaiterNewOrder.TabIndex = 4;
+            this.btnWaiterNewOrder.Text = "Passer une commande";
+            this.btnWaiterNewOrder.UseVisualStyleBackColor = true;
+            this.btnWaiterNewOrder.Click += new System.EventHandler(this.btnWaiterNewOrder_Click);
+            // 
+            // tlpWaiterNewBill
+            // 
+            this.tlpWaiterNewBill.AutoSize = true;
+            this.tlpWaiterNewBill.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpWaiterNewBill.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tlpWaiterNewBill.Font = new System.Drawing.Font("Segoe UI", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tlpWaiterNewBill.Location = new System.Drawing.Point(3, 878);
+            this.tlpWaiterNewBill.Name = "tlpWaiterNewBill";
+            this.tlpWaiterNewBill.Size = new System.Drawing.Size(1074, 124);
+            this.tlpWaiterNewBill.TabIndex = 5;
+            this.tlpWaiterNewBill.Text = "Facturer une table";
+            this.tlpWaiterNewBill.UseVisualStyleBackColor = true;
+            // 
+            // tlpWaiterHeader
+            // 
+            this.tlpWaiterHeader.ColumnCount = 2;
+            this.tlpWaiterHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpWaiterHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpWaiterHeader.Controls.Add(this.lblWaiter, 0, 0);
+            this.tlpWaiterHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpWaiterHeader.Location = new System.Drawing.Point(3, 3);
+            this.tlpWaiterHeader.Name = "tlpWaiterHeader";
+            this.tlpWaiterHeader.RowCount = 1;
+            this.tlpWaiterHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpWaiterHeader.Size = new System.Drawing.Size(1074, 47);
+            this.tlpWaiterHeader.TabIndex = 1;
+            // 
+            // lblWaiter
+            // 
+            this.lblWaiter.AutoSize = true;
+            this.lblWaiter.Dock = System.Windows.Forms.DockStyle.Left;
+            this.lblWaiter.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWaiter.Location = new System.Drawing.Point(3, 0);
+            this.lblWaiter.Name = "lblWaiter";
+            this.lblWaiter.Size = new System.Drawing.Size(149, 47);
+            this.lblWaiter.TabIndex = 0;
+            this.lblWaiter.Text = "Accueil Serveur";
             // 
             // tlpCuisine
             // 
@@ -623,13 +714,13 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1080, 1062);
             this.ControlBox = false;
-            this.Controls.Add(this.tlpCuisine);
-            this.Controls.Add(this.tlpHome);
-            this.Controls.Add(this.tlpMenu);
-            this.Controls.Add(this.tlpOrder_confirmation);
+            this.Controls.Add(this.tlpWaiter);
             this.Controls.Add(this.tlpTable_select);
+            this.Controls.Add(this.tlpMenu);
+            this.Controls.Add(this.tlpHome);
+            this.Controls.Add(this.tlpCuisine);
+            this.Controls.Add(this.tlpOrder_confirmation);
             this.Controls.Add(this.tlpMenu_edit);
-            this.Controls.Add(this.tlpServeur);
             this.Controls.Add(this.tlpSettings);
             this.Font = new System.Drawing.Font("Segoe UI", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -645,9 +736,14 @@
             this.tlpHome.ResumeLayout(false);
             this.tlpHome.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctHomeSettings)).EndInit();
-            this.tlpServeur.ResumeLayout(false);
-            this.tlpServeurHeader.ResumeLayout(false);
-            this.tlpServeurHeader.PerformLayout();
+            this.tlpWaiter.ResumeLayout(false);
+            this.tlpWaiter.PerformLayout();
+            this.tlpWaiterDrinksInStandby.ResumeLayout(false);
+            this.tlpWaiterDrinksInStandby.PerformLayout();
+            this.tlpWaiterOrdersCompleted.ResumeLayout(false);
+            this.tlpWaiterOrdersCompleted.PerformLayout();
+            this.tlpWaiterHeader.ResumeLayout(false);
+            this.tlpWaiterHeader.PerformLayout();
             this.tlpCuisine.ResumeLayout(false);
             this.tlpCuisineHeader.ResumeLayout(false);
             this.tlpCuisineHeader.PerformLayout();
@@ -675,12 +771,12 @@
         private System.Windows.Forms.ImageList imlMenu;
         private System.Windows.Forms.TableLayoutPanel tlpHome;
         private System.Windows.Forms.Label lblHome;
-        private System.Windows.Forms.Button btnHomeServeur;
+        private System.Windows.Forms.Button btnHomeWaiter;
         private System.Windows.Forms.Button btnHomeClient;
         private System.Windows.Forms.Button btnHomeCuisine;
         private System.Windows.Forms.PictureBox pctHomeSettings;
-        private System.Windows.Forms.TableLayoutPanel tlpServeur;
-        private System.Windows.Forms.Label lblServeur;
+        private System.Windows.Forms.TableLayoutPanel tlpWaiter;
+        private System.Windows.Forms.Label lblWaiter;
         private System.Windows.Forms.TableLayoutPanel tlpCuisine;
         private System.Windows.Forms.Label lblCuisine;
         private System.Windows.Forms.TableLayoutPanel tlpTable_select;
@@ -693,8 +789,7 @@
         private System.Windows.Forms.TableLayoutPanel tlpSettingsHeader;
         private System.Windows.Forms.Label lblSettings;
         private System.Windows.Forms.Button btnSettingsReturn;
-        private System.Windows.Forms.TableLayoutPanel tlpServeurHeader;
-        private System.Windows.Forms.Button btnServeurReturn;
+        private System.Windows.Forms.TableLayoutPanel tlpWaiterHeader;
         private System.Windows.Forms.TableLayoutPanel tlpCuisineHeader;
         private System.Windows.Forms.Button btnCuisineReturn;
         private System.Windows.Forms.TableLayoutPanel tlpMenuHeader;
@@ -710,6 +805,13 @@
         private System.Windows.Forms.Button btnMenuConfirm;
         private System.Windows.Forms.Label lblTable_selectError;
         private System.Windows.Forms.Label lblOrder_confirmation;
+        private System.Windows.Forms.Button btnWaiterReturn;
+        private System.Windows.Forms.Button btnWaiterNewOrder;
+        private System.Windows.Forms.Button tlpWaiterNewBill;
+        private System.Windows.Forms.TableLayoutPanel tlpWaiterDrinksInStandby;
+        private System.Windows.Forms.Label lblWaiterDrinksInStandby;
+        private System.Windows.Forms.TableLayoutPanel tlpWaiterOrdersCompleted;
+        private System.Windows.Forms.Label lblWaiterOrdersCompleted;
     }
 }
 

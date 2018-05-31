@@ -26,6 +26,9 @@ namespace CateringEasy
      */
     class DatabaseManager
     {
+        //Event launched once the database is updated.
+        public event EventHandler<EventArgs> DatabaseUpdated;
+        
         /*  
          *  METHODE CONNEXION
          *  Cette méthode crée et gère la connexion vers le fichier de base de données
@@ -71,6 +74,9 @@ namespace CateringEasy
 
                 MySqlCommand cmd = new MySqlCommand(Request, dbConnexion);
                 MySqlDataReader reader = cmd.ExecuteReader();
+
+                //If the DatabaseUpdated EventHandler has been assigned from FormMain, invokes DatabaseUpdated EventHandler
+                DatabaseUpdated?.Invoke(this, new EventArgs());
                 //  Retourne le résultat de la requête
                 return reader;
             }
