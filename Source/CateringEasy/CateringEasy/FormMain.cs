@@ -211,14 +211,7 @@ namespace CateringEasy
                                 //Adds the details of the order to the TableLayoutPanel
                                 while (readerOrderItems.Read())
                                 {
-                                    Button btnDeleteItem = new Button
-                                    {
-                                        Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point),
-                                        BackColor = Color.OrangeRed,
-                                        Dock = DockStyle.Fill,
-                                        Text = "Supprimmer",
-                                        Name = "btnDeleteItem_Order" + readerOrder.GetValue(2),
-                                    };
+                                    Button btnDeleteItem = GenerateButton(Color.OrangeRed, "btnDeleteItem_Order" + readerOrder.GetValue(2), "Supprimmer", 8F);
                                     btnDeleteItem.Click += new EventHandler(btnDeleteItem_Click);
 
                                     tlpCmdItems.ColumnStyles.Add(new ColumnStyle { SizeType = SizeType.Percent, Width = 70 });
@@ -234,17 +227,26 @@ namespace CateringEasy
                             //Adds action buttons to the main panel
                             TableLayoutPanel tlpCmdButtons = new TableLayoutPanel { ColumnCount = 3, RowCount = 1, Dock = DockStyle.Bottom, Width = 200 };
 
-                            Button btnOrderStarted = new Button { Name = "btnOrderStarted" + readerOrder.GetValue(0).ToString(), Width = 200, BackColor = Color.Yellow, Height = 80, AutoSize = true, Text = "Commencer la préparation" };
+                            Button btnOrderStarted = GenerateButton(Color.Yellow, "btnOrderStarted" + readerOrder.GetValue(0).ToString(), "Commencer la préparation", 10F);
+                            btnOrderStarted.Height = 80;
+                            btnOrderStarted.Width = 300;
+                            btnOrderStarted.AutoSize = true;
                             btnOrderStarted.Click += new EventHandler(btnOrder_Click);
                             if ((bool)readerOrder.GetValue(4))
                             {
                                 btnOrderStarted.Enabled = false;
                             }
 
-                            Button btnOrderEnded = new Button { Name = "btnOrderEnded" + readerOrder.GetValue(0).ToString(), Width = 200, BackColor = Color.Green, Height = 80, AutoSize = true, Text = "Terminée" };
+                            Button btnOrderEnded = GenerateButton(Color.Green, "btnOrderEnded" + readerOrder.GetValue(0).ToString(), "Terminée", 10F);
+                            btnOrderEnded.Height = 80;
+                            btnOrderEnded.Width = 300;
+                            btnOrderEnded.AutoSize = true;
                             btnOrderEnded.Click += new EventHandler(btnOrder_Click);
 
-                            Button btnOrderDelete = new Button { Name = "btnOrderDelete" + readerOrder.GetValue(0).ToString(), Width = 200, BackColor = Color.OrangeRed, Height = 80, AutoSize = true, Text = "Supprimmer" };
+                            Button btnOrderDelete = GenerateButton(Color.OrangeRed, "btnOrderDelete" + readerOrder.GetValue(0).ToString(), "Supprimmer", 10F);
+                            btnOrderDelete.Height = 80;
+                            btnOrderDelete.Width = 300;
+                            btnOrderDelete.AutoSize = true;
                             btnOrderDelete.Click += new EventHandler(btnOrder_Click);
 
                             tlpCmdButtons.Controls.Add(btnOrderStarted, 0, 0);
@@ -277,8 +279,10 @@ namespace CateringEasy
         
         private void BuildWaiterOrdersTableLayoutPanel()
         {
-            tlpWaiterDrinksInStandby.RowCount = 1;
-            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, IDOrder FROM cateasy_bd.order WHERE Completed = true AND Delivered = false;");
+            tlpWaiterOrdersCompleted.Controls.Clear();
+            tlpWaiterOrdersCompleted.RowStyles.Clear();
+            tlpWaiterOrdersCompleted.RowCount = 0;
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, IDOrder FROM cateasy_bd.order WHERE Completed AND !Delivered AND !Paid;");
 
             try
             {
@@ -286,20 +290,14 @@ namespace CateringEasy
                 {
                     while(reader.Read())
                     {
-                        tlpWaiterDrinksInStandby.RowCount++;
-                        tlp
-                        Button btnDeleteItem = new Button
-                        {
-                            Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point),
-                            BackColor = Color.OrangeRed,
-                            Dock = DockStyle.Fill,
-                            Text = "Supprimmer",
-                            Name = "btnDeleteOrder" + reader.GetValue(1),
-                        };
-                        btnDeleteItem.Click += new EventHandler(btnDeleteItem_Click);
-
-                        tlpWaiterDrinksInStandby.Controls.Add(new Label { Text = "Table " + reader.GetValue(0).ToString() + " Commande " + reader.GetValue(1).ToString() }, 0, tlpWaiter.RowCount);
-                        tlpWaiterDrinksInStandby.Controls.Add(btnDeleteItem);
+                        tlpWaiterOrdersCompleted.RowCount++;
+                        tlpWaiterOrdersCompleted.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                        Button btnDeleteOrder = GenerateButton(Color.OrangeRed, "btnDeleteItem" + reader.GetValue(1), "Supprimmer", 8F);
+                        Button btnOrderDelivered = GenerateButton(Color.LightSeaGreen, "btnItemDelivered" + reader.GetValue(1), "Rendue", 8F);
+                        btnDeleteOrder.Click += new EventHandler(btnDeleteOrder_Click);
+                        tlpWaiterOrdersCompleted.Controls.Add(new Label { Text = "Commande " + reader.GetValue(1).ToString() + " Table " + reader.GetValue(0).ToString(), AutoSize = true }, 0, tlpWaiterOrdersCompleted.RowCount);
+                        tlpWaiterOrdersCompleted.Controls.Add(btnDeleteOrder, 1, tlpWaiterOrdersCompleted.RowCount);
+                        tlpWaiterOrdersCompleted.Controls.Add(btnOrderDelivered, 2, tlpWaiterOrdersCompleted.RowCount);
                     }
                 }
             }
@@ -307,21 +305,67 @@ namespace CateringEasy
             {
                 ExceptionManager.NewException(e, "Un problème est survenu lors du chargement des commandes à livrer. Veuillez contacter le support technique", true);
             }
-            while (reader.Read())
-            {
+            //Adding an empty label at the bottom of the TableLayoutPanel so the last row does not fill the remaining Height in the TableLayoutPanel
+            tlpWaiterOrdersCompleted.Controls.Add(new Label(), 0, tlpWaiterOrdersCompleted.RowCount = tlpWaiterOrdersCompleted.RowCount++);
+        }
 
-            }
+        private void btnDeleteOrder_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            Db.SqlRequest("UPDATE cateasy_bd.orders SET Completed AND Paid AND Started AND Delivered WHERE IDOrder = " + MessageBox.Show(Regex.Match(btn.Name, @"\d+$").Value.ToString()) + ";");
+        }
+
+        private static Button GenerateButton(Color col, string name, string text, float fontsize)
+        {
+            return new Button
+            {
+                Font = new Font("Segoe UI", fontsize, FontStyle.Regular, GraphicsUnit.Point),
+                Dock = DockStyle.Fill,
+                BackColor = col,
+                Name = name,
+                Text = text,
+                UseVisualStyleBackColor = true,
+                FlatStyle = FlatStyle.Flat,
+            };
         }
 
         private void BuildWaiterDrinksInStandbyTableLayoutPanel()
         {
+            tlpWaiterDrinksInStandby.Controls.Clear();
+            tlpWaiterDrinksInStandby.RowStyles.Clear();
+            tlpWaiterDrinksInStandby.RowCount = 0;
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, Name FROM cateasy_bd.order_mitems RIGHT JOIN cateasy_bd.order ON IDOrder = FIDOrder RIGHT JOIN cateasy_bd.menuitem ON IDMenuItem = FIDMenuItem WHERE IsDrink; ");
+
+            try
+            {
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        tlpWaiterDrinksInStandby.RowCount++;
+                        tlpWaiterDrinksInStandby.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+                        Button btnDeleteOrder = GenerateButton(Color.OrangeRed, "btnDeleteItem" + reader.GetValue(1), "Supprimmer", 8F);
+                        Button btnOrderDelivered = GenerateButton(Color.LightSeaGreen, "btnItemDelivered" + reader.GetValue(1), "Rendue", 8F);
+                        btnDeleteOrder.Click += new EventHandler(btnDeleteItem_Click);
+                        tlpWaiterDrinksInStandby.Controls.Add(new Label { Text = "Commande " + reader.GetValue(1).ToString() + " Table " + reader.GetValue(0).ToString(), AutoSize = true }, 0, tlpWaiterDrinksInStandby.RowCount);
+                        tlpWaiterDrinksInStandby.Controls.Add(btnDeleteOrder, 1, tlpWaiterDrinksInStandby.RowCount);
+                        tlpWaiterDrinksInStandby.Controls.Add(btnOrderDelivered, 2, tlpWaiterDrinksInStandby.RowCount);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionManager.NewException(e, "Un problème est survenu lors du chargement des commandes à livrer. Veuillez contacter le support technique", true);
+            }
+            //Adding an empty label at the bottom of the TableLayoutPanel so the last row does not fill the remaining Height in the TableLayoutPanel
+            tlpWaiterDrinksInStandby.Controls.Add(new Label(), 0, tlpWaiterDrinksInStandby.RowCount = tlpWaiterOrdersCompleted.RowCount++);
 
         }
 
         private void btnDeleteItem_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            Db.SqlRequest("DELETE FROM cateasy_bd.order_mitems WHERE IDOrder_MItem = " + Regex.Match(btn.Name, @"\d+$"));
+            Db.SqlRequest("UPDATE cateasy_bd.order_mitems SET Completed AND Paid WHERE IDOrder_MItem = " + Regex.Match(btn.Name, @"\d+$"));
         }
 
         private static Accordion BuildOrdersAccordion()
@@ -443,7 +487,6 @@ namespace CateringEasy
         private void btnOrder_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            
             
             try
             {
@@ -638,17 +681,8 @@ namespace CateringEasy
                 }
                 if(!alreadyBuilt)
                 {
-                    Button btnReturnToWaiterHome = new Button
-                    {
-                        Dock = DockStyle.Bottom,
-                        Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
-                        Location = new Point(3, 948),
-                        Name = "btnWaiterReturn",
-                        Size = new Size(1074, 111),
-                        TabIndex = 2,
-                        Text = "OK",
-                        UseVisualStyleBackColor = true,
-                    };
+                    Button btnReturnToWaiterHome = GenerateButton(DefaultBackColor, "btnReturnToWaiterHome", "Retour", 9F);
+                    btnReturnToWaiterHome.Location = new Point(3, 948);
                     btnReturnToWaiterHome.Click += new EventHandler(btnReturnToHome_Click);
                     tlpOrder_confirmation.Controls.Add(btnReturnToWaiterHome, 0, 1);
                 }
@@ -707,18 +741,10 @@ namespace CateringEasy
                         TabIndex = 4,
                         TextAlign = HorizontalAlignment.Center,
                     };
-                    Button btnReturnToHomeProtection = new Button
-                    {
-                        Anchor = AnchorStyles.Top,
-                        FlatStyle = FlatStyle.Flat,
-                        Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
-                        Location = new Point(540, 368),
-                        Name = "btnReturnToHomeProtection",
-                        Size = new Size(531, 69),
-                        TabIndex = 2,
-                        Text = "Retour",
-                        UseVisualStyleBackColor = true,
-                    };
+                    Button btnReturnToHomeProtection = GenerateButton(DefaultBackColor, "btnReturnToHomeProtection", "Retour à l'accueil", 9F);
+                    btnReturnToHomeProtection.Location = new Point(540, 368);
+                    btnReturnToHomeProtection.Anchor = AnchorStyles.Top;
+                    btnReturnToHomeProtection.Dock = DockStyle.None;
                     btnReturnToHomeProtection.Click += new EventHandler(btnReturnToHomeProtection_Click);
 
                     tlpReturnToHomeProtection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));

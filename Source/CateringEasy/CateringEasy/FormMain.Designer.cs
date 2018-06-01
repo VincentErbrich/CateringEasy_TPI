@@ -213,9 +213,11 @@
             // 
             // tlpWaiterDrinksInStandby
             // 
-            this.tlpWaiterDrinksInStandby.ColumnCount = 1;
+            this.tlpWaiterDrinksInStandby.AutoScroll = true;
+            this.tlpWaiterDrinksInStandby.ColumnCount = 3;
             this.tlpWaiterDrinksInStandby.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpWaiterDrinksInStandby.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpWaiterDrinksInStandby.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 134F));
+            this.tlpWaiterDrinksInStandby.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 189F));
             this.tlpWaiterDrinksInStandby.Controls.Add(this.lblWaiterDrinksInStandby, 0, 0);
             this.tlpWaiterDrinksInStandby.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpWaiterDrinksInStandby.Location = new System.Drawing.Point(3, 402);
@@ -238,6 +240,7 @@
             // 
             // tlpWaiterOrdersCompleted
             // 
+            this.tlpWaiterOrdersCompleted.AutoScroll = true;
             this.tlpWaiterOrdersCompleted.AutoSize = true;
             this.tlpWaiterOrdersCompleted.ColumnCount = 3;
             this.tlpWaiterOrdersCompleted.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
