@@ -28,10 +28,7 @@ namespace CateringEasy
     {
         //Event launched once the database is updated.
         public event EventHandler<EventArgs> DatabaseUpdated;
-
-        //Database connexion object
-        public MySqlConnection DbConnexion;
-
+        
         /*  
          *  METHODE CONNEXION
          *  Cette méthode crée et gère la connexion vers le fichier de base de données
@@ -39,18 +36,21 @@ namespace CateringEasy
          *      
          *  RETOURNE : La connexion à la base de donnée
          */
-        public void Connexion()
+        public MySqlConnection Connexion()
         {
             try
             {
                 //  La connexion est initialisée dans une instance de l'objet SQLiteConnection
-                DbConnexion = new MySqlConnection("Server=web20.swisscenter.com;Port=3306;UID=cateasy_bd;Password=P4$$w04d_?");
+                MySqlConnection m_dbConnection = new MySqlConnection("Server=web20.swisscenter.com;Port=3306;UID=cateasy_bd;Password=P4$$w04d_?");
                 //  La connexion est ouverte
-                DbConnexion.Open();
+                m_dbConnection.Open();
+                //  La connexion est retournée et la méthode stoppée
+                return m_dbConnection;
             }
             catch (Exception e)
             {
                 ExceptionManager.NewException(e, "La base de données n'a pas pu être trouvée : Veuillez contacter le support technique", true);
+                return null;
             }
         }
         /*
@@ -69,8 +69,9 @@ namespace CateringEasy
             //SQLiteCommand command = new SQLiteCommand(Request, Connexion());
             try
             {
-                Connexion();
-                MySqlCommand cmd = new MySqlCommand(Request, DbConnexion);
+                MySqlConnection dbConnexion = Connexion();
+
+                MySqlCommand cmd = new MySqlCommand(Request, dbConnexion);
                 MySqlDataReader reader = cmd.ExecuteReader();
 
                 //If the DatabaseUpdated EventHandler has been assigned from FormMain, invokes DatabaseUpdated EventHandler
@@ -86,30 +87,8 @@ namespace CateringEasy
                 //  Ne retourne rien
                 return null;
             }     
-        }
-        public void SqlRequestNonQuery(string Request)
-        {
-            if (Request == null)
-            {
-                throw new ArgumentNullException(nameof(Request));
-            }
-            //  Initialise la commande dans une nouvelle instance de l'objet SQLiteCommand
-            //SQLiteCommand command = new SQLiteCommand(Request, Connexion());
-            try
-            {
-                MySqlCommand cmd = new MySqlCommand(Request, DbConnexion);
-                cmd.ExecuteNonQuery();
 
-                //If the DatabaseUpdated EventHandler has been assigned from FormMain, invokes DatabaseUpdated EventHandler
-                DatabaseUpdated?.Invoke(this, new EventArgs());
-                cmd.Dispose();
-            }
-            catch (Exception e)
-            {
-                //  Exectute ce code en cas d'erreur :
-                //  Passe l'exception à Exception_Manager
-                ExceptionManager.NewException(e, "Requête incorrecte", false);
-            }
         }
+
     }
 }

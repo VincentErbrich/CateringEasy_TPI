@@ -158,7 +158,7 @@
             this.lblHome.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHome.Location = new System.Drawing.Point(3, 0);
             this.lblHome.Name = "lblHome";
-            this.lblHome.Size = new System.Drawing.Size(239, 25);
+            this.lblHome.Size = new System.Drawing.Size(475, 25);
             this.lblHome.TabIndex = 0;
             this.lblHome.Text = "Qui va utiliser la tablette ?";
             // 
@@ -235,7 +235,7 @@
             this.lblWaiterDrinksInStandby.Font = new System.Drawing.Font("Segoe UI Semibold", 10.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWaiterDrinksInStandby.Location = new System.Drawing.Point(3, 0);
             this.lblWaiterDrinksInStandby.Name = "lblWaiterDrinksInStandby";
-            this.lblWaiterDrinksInStandby.Size = new System.Drawing.Size(130, 340);
+            this.lblWaiterDrinksInStandby.Size = new System.Drawing.Size(256, 340);
             this.lblWaiterDrinksInStandby.TabIndex = 0;
             this.lblWaiterDrinksInStandby.Text = "Boissons en attente";
             // 
@@ -263,7 +263,7 @@
             this.lblWaiterOrdersCompleted.Font = new System.Drawing.Font("Segoe UI Semibold", 10.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWaiterOrdersCompleted.Location = new System.Drawing.Point(3, 0);
             this.lblWaiterOrdersCompleted.Name = "lblWaiterOrdersCompleted";
-            this.lblWaiterOrdersCompleted.Size = new System.Drawing.Size(128, 340);
+            this.lblWaiterOrdersCompleted.Size = new System.Drawing.Size(253, 340);
             this.lblWaiterOrdersCompleted.TabIndex = 0;
             this.lblWaiterOrdersCompleted.Text = "Commandes prêtes";
             // 
@@ -328,7 +328,7 @@
             this.lblWaiter.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWaiter.Location = new System.Drawing.Point(3, 0);
             this.lblWaiter.Name = "lblWaiter";
-            this.lblWaiter.Size = new System.Drawing.Size(149, 47);
+            this.lblWaiter.Size = new System.Drawing.Size(292, 47);
             this.lblWaiter.TabIndex = 0;
             this.lblWaiter.Text = "Accueil Serveur";
             // 
@@ -372,7 +372,7 @@
             this.lblCuisine.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCuisine.Location = new System.Drawing.Point(3, 0);
             this.lblCuisine.Name = "lblCuisine";
-            this.lblCuisine.Size = new System.Drawing.Size(144, 30);
+            this.lblCuisine.Size = new System.Drawing.Size(283, 30);
             this.lblCuisine.TabIndex = 0;
             this.lblCuisine.Text = "Accueil Cuisine";
             // 
@@ -417,9 +417,9 @@
             this.lblTable_selectError.AutoSize = true;
             this.lblTable_selectError.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTable_selectError.ForeColor = System.Drawing.Color.Red;
-            this.lblTable_selectError.Location = new System.Drawing.Point(540, 768);
+            this.lblTable_selectError.Location = new System.Drawing.Point(540, 756);
             this.lblTable_selectError.Name = "lblTable_selectError";
-            this.lblTable_selectError.Size = new System.Drawing.Size(0, 25);
+            this.lblTable_selectError.Size = new System.Drawing.Size(0, 50);
             this.lblTable_selectError.TabIndex = 4;
             this.lblTable_selectError.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -457,9 +457,9 @@
             this.lblTable_selectNumber.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lblTable_selectNumber.AutoSize = true;
             this.lblTable_selectNumber.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTable_selectNumber.Location = new System.Drawing.Point(176, 91);
+            this.lblTable_selectNumber.Location = new System.Drawing.Point(137, 78);
             this.lblTable_selectNumber.Name = "lblTable_selectNumber";
-            this.lblTable_selectNumber.Size = new System.Drawing.Size(86, 25);
+            this.lblTable_selectNumber.Size = new System.Drawing.Size(165, 50);
             this.lblTable_selectNumber.TabIndex = 2;
             this.lblTable_selectNumber.Text = "Table N\'";
             this.lblTable_selectNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -469,10 +469,10 @@
             this.txtTable_selectNumber.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.txtTable_selectNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtTable_selectNumber.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTable_selectNumber.Location = new System.Drawing.Point(442, 86);
+            this.txtTable_selectNumber.Location = new System.Drawing.Point(442, 72);
             this.txtTable_selectNumber.MinimumSize = new System.Drawing.Size(146, 27);
             this.txtTable_selectNumber.Name = "txtTable_selectNumber";
-            this.txtTable_selectNumber.Size = new System.Drawing.Size(185, 35);
+            this.txtTable_selectNumber.Size = new System.Drawing.Size(185, 63);
             this.txtTable_selectNumber.TabIndex = 3;
             this.txtTable_selectNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -481,9 +481,9 @@
             this.lblTable_select.AutoSize = true;
             this.lblTable_select.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblTable_select.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTable_select.Location = new System.Drawing.Point(3, 227);
+            this.lblTable_select.Location = new System.Drawing.Point(3, 202);
             this.lblTable_select.Name = "lblTable_select";
-            this.lblTable_select.Size = new System.Drawing.Size(1074, 25);
+            this.lblTable_select.Size = new System.Drawing.Size(1074, 50);
             this.lblTable_select.TabIndex = 1;
             this.lblTable_select.Text = "Veuillez entrer un numéro de table";
             this.lblTable_select.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -553,7 +553,7 @@
             this.lblMenu.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMenu.Location = new System.Drawing.Point(3, 0);
             this.lblMenu.Name = "lblMenu";
-            this.lblMenu.Size = new System.Drawing.Size(231, 43);
+            this.lblMenu.Size = new System.Drawing.Size(454, 43);
             this.lblMenu.TabIndex = 0;
             this.lblMenu.Text = "Veuillez faire votre choix";
             // 
@@ -577,13 +577,13 @@
             this.tlpMenuList.ColumnCount = 1;
             this.tlpMenuList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMenuList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpMenuList.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tlpMenuList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMenuList.Location = new System.Drawing.Point(3, 52);
             this.tlpMenuList.Name = "tlpMenuList";
             this.tlpMenuList.RowCount = 1;
             this.tlpMenuList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMenuList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 932F));
-            this.tlpMenuList.Size = new System.Drawing.Size(1074, 0);
+            this.tlpMenuList.Size = new System.Drawing.Size(1074, 932);
             this.tlpMenuList.TabIndex = 4;
             // 
             // tlpMenu_edit
@@ -627,7 +627,7 @@
             this.lblMenu_edit.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMenu_edit.Location = new System.Drawing.Point(3, 0);
             this.lblMenu_edit.Name = "lblMenu_edit";
-            this.lblMenu_edit.Size = new System.Drawing.Size(291, 30);
+            this.lblMenu_edit.Size = new System.Drawing.Size(388, 30);
             this.lblMenu_edit.TabIndex = 0;
             this.lblMenu_edit.Text = "Modifier le menu du restaurant";
             // 
@@ -664,9 +664,9 @@
             this.lblOrder_confirmation.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblOrder_confirmation.AutoSize = true;
             this.lblOrder_confirmation.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOrder_confirmation.Location = new System.Drawing.Point(384, 440);
+            this.lblOrder_confirmation.Location = new System.Drawing.Point(237, 415);
             this.lblOrder_confirmation.Name = "lblOrder_confirmation";
-            this.lblOrder_confirmation.Size = new System.Drawing.Size(311, 25);
+            this.lblOrder_confirmation.Size = new System.Drawing.Size(606, 50);
             this.lblOrder_confirmation.TabIndex = 0;
             this.lblOrder_confirmation.Text = "Votre commande à bien été reçue";
             // 
@@ -711,7 +711,7 @@
             this.lblSettings.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSettings.Location = new System.Drawing.Point(3, 0);
             this.lblSettings.Name = "lblSettings";
-            this.lblSettings.Size = new System.Drawing.Size(224, 29);
+            this.lblSettings.Size = new System.Drawing.Size(438, 29);
             this.lblSettings.TabIndex = 1;
             this.lblSettings.Text = "Règlages - informations";
             // 
@@ -730,13 +730,13 @@
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1080, 1062);
             this.ControlBox = false;
-            this.Controls.Add(this.tlpWaiter);
             this.Controls.Add(this.tlpMenu);
+            this.Controls.Add(this.tlpWaiter);
             this.Controls.Add(this.tlpTable_select);
             this.Controls.Add(this.tlpHome);
             this.Controls.Add(this.tlpCuisine);

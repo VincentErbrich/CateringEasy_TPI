@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Settings` (
 -- -----------------------------------------------------
 -- Table `cateasy_bd`.`Order_MItems`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Order_MItems` (
+CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order_MItems` (
   `IDOrder_Mitems` INT NOT NULL AUTO_INCREMENT,
   `FIDOrder` INT NOT NULL,
   `FIDMenuItem` INT NOT NULL,
@@ -80,12 +80,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Order_MItems` (
   PRIMARY KEY (`IDOrder_Mitems`),
   CONSTRAINT `fk_Order_MItems_MenuItem1`
     FOREIGN KEY (`FIDMenuItem`)
-    REFERENCES `mydb`.`MenuItem` (`IDMenuItem`)
+    REFERENCES `cateasy_bd`.`MenuItem` (`IDMenuItem`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_MItems_Order1`
     FOREIGN KEY (`FIDOrder`)
-    REFERENCES `mydb`.`Order` (`IDOrder`)
+    REFERENCES `cateasy_bd`.`Order` (`IDOrder`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 

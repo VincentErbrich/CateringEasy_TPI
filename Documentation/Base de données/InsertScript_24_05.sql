@@ -24,9 +24,9 @@ INSERT INTO `cateasy_bd`.`MenuItem` (`IDMenuItem`, `Name`, `Price`, `Image`, `Re
 INSERT INTO `cateasy_bd`.`Order` (`IDOrder`, `FIDTable`, `Completed`, `Paid`) VALUES (1, 2, 0, 0);
 INSERT INTO `cateasy_bd`.`Order` (`IDOrder`, `FIDTable`, `Completed`, `Paid`) VALUES (2, 1, 0, 0);
 
-INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (1, 1, 0);
-INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (9, 1, 0);
-INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (10, 1, 0);
-INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (3, 2, 0);
-INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (4, 2, 0);
-INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Completed`) VALUES (8, 2, 0);
+INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Delivered`, `Paid`) VALUES (1, 1, 0, 0);
+INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Delivered`, `Paid`) VALUES (9, 1, 0, 0);
+INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Delivered`, `Paid`) VALUES (10, 1, 0, 0);
+INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Delivered`, `Paid`) VALUES (3, 2, 0, 0);
+INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Delivered`, `Paid`) VALUES (4, 2, 0, 0);
+INSERT INTO `cateasy_bd`.`Order_MItems` (`FIDMenuItem`, `FIDOrder`, `Delivered`, `Paid`) VALUES (8, 2, 0, 0);
