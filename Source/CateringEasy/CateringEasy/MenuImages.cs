@@ -6,13 +6,8 @@
  * Second Expert : Laurent Ruchat
  * Creation date : 22/05/2018
  */
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CateringEasy
@@ -21,16 +16,16 @@ namespace CateringEasy
     {
         public static ImageList ImlMenu { get; set; }
 
-        public static void LoadMenuImages()
+        private static void LoadMenuImages(DatabaseManager db)
         {
-            //SqlDataReader reader = new SqlDataReader(/**/);
-            //while (reader.Read())
-            //{
-            //    byte[] bytearray = (byte[])reader.GetValue(/**/);
-            //    ImageConverter imgconverter = new ImageConverter();
-            //    Image menuimg = imgconverter.ByteArrayToImage(bytearray);
-            //    ImlMenu.Images.Add(reader.GetValue(/**/).ToString(), menuimg);
-            //}
+            MySqlDataReader reader = db.SqlRequest("", false); 
+            while (reader.Read())
+            {
+                byte[] bytearray = (byte[])reader.GetValue(0);
+               ImageConverter imgconverter = new ImageConverter();
+               Image menuimg = imgconverter.ByteArrayToImage(bytearray);
+               ImlMenu.Images.Add(reader.GetValue(0).ToString(), menuimg);
+            }
         }
         public static void AddMenuImage(Image img, string imgkey)
         {

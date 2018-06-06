@@ -28,7 +28,7 @@ namespace CateringEasy
             else
             {
                 DatabaseManager db = new DatabaseManager();
-                MySqlDataReader results = db.SqlRequest("SELECT Password FROM cateasy_bd.Settings;");
+                MySqlDataReader results = db.SqlRequest("SELECT Password FROM cateasy_bd.settings;", false);
                 try
                 {
                     while (results.Read())

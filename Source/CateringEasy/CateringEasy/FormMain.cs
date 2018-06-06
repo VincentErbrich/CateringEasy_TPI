@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -61,12 +62,12 @@ namespace CateringEasy
             Db.DatabaseUpdated += DatabaseUpdated;
         }
         /*
-         * Load event handler method for this Form. Shows the home TableLayoutPanel and loads images from the database.
+         * Load event handler method for this Form. Shows the home TableLayoutPanel.
          */
         private void FormMain_Load(object sender, EventArgs e)
         {
             ShowTableLayoutPanel(tlpHome, tlpHome);
-            MenuImages.LoadMenuImages();
+            //MenuImages.LoadMenuImages();
             MenuBuilt = false;
         }
         /*
@@ -105,7 +106,7 @@ namespace CateringEasy
 
             //Gets the currency of the pricing to show in the header. If the currency is not specified in the Database, sets the currency to "CHF".
             string Currency = "CHF";
-            MySqlDataReader readerCurrency = Db.SqlRequest("SELECT Currency FROM cateasy_bd.Settings;");
+            MySqlDataReader readerCurrency = Db.SqlRequest("SELECT Currency FROM cateasy_bd.settings;", false);
             try
             {
                 if (readerCurrency.HasRows)
@@ -114,19 +115,13 @@ namespace CateringEasy
                     {
                         Currency = readerCurrency.GetValue(0).ToString();
                     }
-                    Db.DbConnexion.Dispose();
-                    readerCurrency.Close();
-                    readerCurrency.Dispose();
                 }
             }
             catch { }
 
             if (edit)
             {
-                //Initializes the header.
-                tlpMenuList.Controls.Add(new Label { Text = "Nom", AutoSize = false, Height = 48 }, 0, 0);
-                tlpMenuList.Controls.Add(new Label { Text = "Prix " + Currency, AutoSize = false, Height = 48 }, 1, 0);
-                tlpMenuList.Controls.Add(new Label { Text = "Quantité souhaitée", AutoSize = false, Height = 48 }, 2, 0);
+
             }
             else
             {
@@ -145,7 +140,7 @@ namespace CateringEasy
                 tlpMenuList.Controls.Add(new Label { Text = "En stock", AutoSize = false, Height = 48, Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point) }, 2, 0);
 
                 //Reads the menu items from the Database, puts them in a MySqlDataReader object, then builds the TableLayoutPanel according to the values in the MySqlDataReader object.
-                MySqlDataReader readerMenu = Db.SqlRequest("SELECT IDMenuItem, Name, Price, Remaining FROM cateasy_bd.MenuItem WHERE Remaining > 1");
+                MySqlDataReader readerMenu = Db.SqlRequest("SELECT IDMenuItem, Name, Price, Remaining FROM cateasy_bd.menuitem WHERE Remaining > 1", false);
                 try
                 {
                     if (readerMenu.HasRows)
@@ -158,9 +153,6 @@ namespace CateringEasy
                             tlpMenuList.Controls.Add(new Label { Text = readerMenu.GetValue(2).ToString(), Height = 38, AutoSize = false, Font = new Font("Segoe UI Semibold", 10F, FontStyle.Regular, GraphicsUnit.Point) }, 1, tlpMenuList.RowCount);
                             tlpMenuList.Controls.Add(new NumericUpDown { Value = 0, Name = "nudQuantityItem" + readerMenu.GetValue(0), Maximum = readerMenu.GetInt16(3), Minimum = 0, Height = 38, Margin = new Padding(0, 0, 0, 0), AutoSize = false, Font = new Font("Segoe UI Semibold", 10F, FontStyle.Regular, GraphicsUnit.Point) }, 3, tlpMenuList.RowCount);
                         }
-                        Db.DbConnexion.Dispose();
-                        readerMenu.Close();
-                        readerMenu.Dispose();
                     }
                 }
                 catch (Exception e)
@@ -169,92 +161,7 @@ namespace CateringEasy
                 }
             }
         }
-        /*private void BuildMenuList(bool edit)
-        {
-            //If the menu has not already been built, builds the menu.
-            if (!MenuBuilt)
-            {
-                //Initializes the text columns and the header.
-                dgvMenu.ColumnCount = 2;
-                dgvMenu.Columns[0].Name = "Nom";
-                dgvMenu.Columns[1].Name = "Prix";
-                dgvMenu.Columns[0].ReadOnly = true;
-                dgvMenu.Columns[1].ReadOnly = true;
-
-                //If the menu has to be edited, adds a Textbox column to edit the stock.
-                if (edit)
-                {
-                    DataGridViewTextBoxColumn dgtStock = new DataGridViewTextBoxColumn();
-                    dgtStock.Name = "dgtStock";
-                    dgtStock.DefaultCellStyle.NullValue = "0";
-                    dgtStock.HeaderText = "Quantité";
-                    dgvMenu.Columns.Insert(2, dgtStock);
-                }
-                else
-                {
-                    //Gets the currency of the pricing to show in the DataGridView. If the currency is not specified in the Database, sets the currency to "CHF".
-                    string Currency = "CHF";
-                    MySqlDataReader readerCurrency = Db.SqlRequest("SELECT Currency FROM cateasy_bd.settings;");
-
-                    try
-                    {
-                        if (readerCurrency.HasRows)
-                        {
-                            while (readerCurrency.Read())
-                            {
-                                Currency = readerCurrency.GetValue(0).ToString();
-                            }
-                        }
-                    }
-                    catch { }
-
-                    //Reads the menu items from the Database, puts them in a MySqlDataReader object, then builds the DataGridView according to the values in the MySqlDataReader object.
-                    MySqlDataReader readerMenu = Db.SqlRequest("SELECT Name, Price FROM cateasy_bd.MenuItem WHERE Remaining > 1");
-                    try
-                    {
-                        if (readerMenu.HasRows)
-                        {
-                            while (readerMenu.Read())
-                            {
-                                Object[] values = new Object[readerMenu.FieldCount];
-                                int fieldCount = readerMenu.GetValues(values);
-                                dgvMenu.Rows.Add(values[0].ToString(), values[1] + Currency);
-                            }
-                        }
-
-                        //Initializes a new DataGridViewButtonColumn object for the user to add an item to his selection, then inserts it into the DataGridView.
-                        DataGridViewButtonColumn dgbAddColumn = new DataGridViewButtonColumn();
-                        dgbAddColumn.HeaderText = "Ajouter";
-                        dgbAddColumn.Text = "+";
-                        dgbAddColumn.UseColumnTextForButtonValue = true;
-                        dgvMenu.Columns.Insert(2, dgbAddColumn);
-
-                        //Initializes a new DataGridView¨TextBoxColumn object for the user to see how many times he has selected x menu item, then inserts it into the DataGridView.
-                        DataGridViewTextBoxColumn dgtSelected = new DataGridViewTextBoxColumn();
-                        dgtSelected.Name = "dgtSelected";
-                        dgtSelected.DefaultCellStyle.NullValue = "0";
-                        dgtSelected.HeaderText = "";
-                        dgtSelected.ReadOnly = true;
-                        dgvMenu.Columns.Insert(3, dgtSelected);
-
-                        //Initializes a new DataGridViewButtonColumn object for the user to remove an item from his selection, then inserts it into the DataGridView.
-                        DataGridViewButtonColumn dgbRemoveColumn = new DataGridViewButtonColumn();
-                        dgbRemoveColumn.HeaderText = "Retirer";
-                        dgbRemoveColumn.Text = "-";
-                        dgbRemoveColumn.UseColumnTextForButtonValue = true;
-                        dgvMenu.Columns.Insert(4, dgbRemoveColumn);
-
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionManager.NewException(e, "Nous avons rencontré un problème lors de la construction du menu. Veuillez contacter le support technique", true);
-                    }
-                    dgvMenu.CellContentClick += new DataGridViewCellEventHandler(dgvMenu_CellContentClick); //Adds the dgvMenu_CellContentClick from this Form class to the CellContentClick event handler in the DataGridView.
-                }
-                MenuBuilt = true;   //Sets the MenuBuilt property to indicate the DataGridView has been built.
-                tlpMenu.Controls.Add(dgvMenu); //Adds the DataGridView as a child to the restaurant menu TableLayoutPanel.
-            }
-        }*/
+ 
         /*
          * Event handler method managing clicks in the menu DataGridView. 
          */
@@ -288,13 +195,14 @@ namespace CateringEasy
             foreach (Accordion acc in tlpCuisine.Controls.OfType<Accordion>())
             {
                 tlpCuisine.Controls.Remove(acc);
+                acc.Dispose();
                 break;
             }
 
             //Initializes the "Cuisine" accordion using the BuildOrdersAccordion method.
             Accordion accCuisine = BuildOrdersAccordion();
 
-            MySqlDataReader readerOrder = Db.SqlRequest("SELECT * FROM cateasy_bd.Order WHERE Completed = false;"); //Gets the orders awaiting completion from the database and puts them in a MySqlDataReader object.
+            MySqlDataReader readerOrder = Db.SqlRequest("SELECT * FROM cateasy_bd.order WHERE !Completed;", false); //Gets the orders awaiting completion from the database and puts them in a MySqlDataReader object.
             try
             {
                 if (readerOrder.HasRows)
@@ -307,7 +215,7 @@ namespace CateringEasy
                         {
                             Panel pnl = new Panel { Dock = DockStyle.Fill };
 
-                            MySqlDataReader readerOrderItems = Db.SqlRequest("SELECT IDMenuItem, Name, IDOrder_Mitems FROM cateasy_bd.Order_MItems RIGHT JOIN cateasy_bd.MenuItem ON FIDMenuItem = IDMenuItem WHERE 'Completed' IS FALSE AND FIDOrder = " + readerOrder.GetValue(0) + ";"); //Gets the current order details from the MySql database and puts them in a MySqlDataReader object.
+                            MySqlDataReader readerOrderItems = Db.SqlRequest("SELECT idmenuitem, Name, idorder_mitems FROM cateasy_bd.order_mitems RIGHT JOIN cateasy_bd.menuitem ON FIDMenuItem = IDMenuItem WHERE !Paid AND !IsDrink AND FIDOrder = " + readerOrder.GetValue(0) + ";", false); //Gets the current order details from the MySql database and puts them in a MySqlDataReader object.
                             if (readerOrderItems.HasRows)
                             {
                                 int j = 0;
@@ -316,7 +224,7 @@ namespace CateringEasy
                                 //Adds the details of the order to the TableLayoutPanel
                                 while (readerOrderItems.Read())
                                 {
-                                    Button btnDeleteItem = GenerateButton(Color.OrangeRed, "btnDeleteItem_Order" + readerOrder.GetValue(2), "Supprimmer", 8F);
+                                    Button btnDeleteItem = GenerateButton(Color.OrangeRed, "btnDeleteItem" + readerOrderItems.GetValue(2), "Supprimmer", 8F);
                                     btnDeleteItem.Click += new EventHandler(btnDeleteItem_Click);
 
                                     tlpCmdItems.ColumnStyles.Add(new ColumnStyle { SizeType = SizeType.Percent, Width = 70 });
@@ -404,11 +312,11 @@ namespace CateringEasy
         private void BuildWaiterOrdersTableLayoutPanel()
         {
             //Clears the TableLayoutPanel.
+            tlpWaiterOrdersCompleted.RowCount = 0;
             tlpWaiterOrdersCompleted.Controls.Clear();
             tlpWaiterOrdersCompleted.RowStyles.Clear();
-            tlpWaiterOrdersCompleted.RowCount = 0;
 
-            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, IDOrder FROM cateasy_bd.Order WHERE Completed AND !Delivered AND !Paid;"); //Gets the orders awaiting delivery from the MySql database and puts them in a MySqlDataReader object.
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, IDOrder FROM cateasy_bd.order WHERE Completed AND !Delivered AND !Paid;", false); //Gets the orders awaiting delivery from the MySql database and puts them in a MySqlDataReader object.
 
             try
             {
@@ -422,20 +330,19 @@ namespace CateringEasy
                         Button btnDeleteOrder = GenerateButton(Color.OrangeRed, "btnDeleteItem" + reader.GetValue(1), "Supprimmer", 8F);
                         Button btnOrderDelivered = GenerateButton(Color.LightSeaGreen, "btnItemDelivered" + reader.GetValue(1), "Rendue", 8F);
                         btnDeleteOrder.Click += new EventHandler(btnDeleteOrder_Click); //Adds the btnDeleteOrder_Click event handler to the Click event handler in the button.
+                        btnOrderDelivered.Click += new EventHandler(btnOrderDelivered_Click); //Adds the btnOrderDelivered_Click event handler to the Click event handler in the button.
                         tlpWaiterOrdersCompleted.Controls.Add(new Label { Text = "Commande " + reader.GetValue(1).ToString() + " Table " + reader.GetValue(0).ToString(), AutoSize = true }, 0, tlpWaiterOrdersCompleted.RowCount);
                         tlpWaiterOrdersCompleted.Controls.Add(btnDeleteOrder, 1, tlpWaiterOrdersCompleted.RowCount);
                         tlpWaiterOrdersCompleted.Controls.Add(btnOrderDelivered, 2, tlpWaiterOrdersCompleted.RowCount);
                     }
-                    Db.DbConnexion.Dispose();
-                    reader.Close();
-                    reader.Dispose();
                 }
             }
             catch (Exception e)
             {
                 ExceptionManager.NewException(e, "Un problème est survenu lors du chargement des commandes à livrer. Veuillez contacter le support technique", true);
             }
-            tlpWaiterOrdersCompleted.Controls.Add(new Label(), 0, tlpWaiterOrdersCompleted.RowCount = tlpWaiterOrdersCompleted.RowCount++); //Adding an empty label at the bottom of the TableLayoutPanel so the last row does not fill the remaining Height in the TableLayoutPanel.
+            tlpWaiterOrdersCompleted.RowCount++;
+            tlpWaiterOrdersCompleted.Controls.Add(new Label(), 2, tlpWaiterOrdersCompleted.RowCount); //Adding an empty label at the bottom of the TableLayoutPanel so the last row does not fill the remaining Height in the TableLayoutPanel.
         }
 
         /*
@@ -444,10 +351,10 @@ namespace CateringEasy
         private void BuildWaiterDrinksInStandbyTableLayoutPanel()
         {
             //Clears the TableLayoutPanel.
+            tlpWaiterDrinksInStandby.RowCount = 0;
             tlpWaiterDrinksInStandby.Controls.Clear();
             tlpWaiterDrinksInStandby.RowStyles.Clear();
-            tlpWaiterDrinksInStandby.RowCount = 0;
-            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, Name FROM cateasy_bd.Order_MItems RIGHT JOIN cateasy_bd.Order ON IDOrder = FIDOrder RIGHT JOIN cateasy_bd.MenuItem ON IDMenuItem = FIDMenuItem WHERE IsDrink AND !Order_MItems.Delivered AND !Order_MItems.Paid; "); //Gets the drinks awaiting delivery from the MySql database and puts them in a MySqlDataReader object. 
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, Name, IDOrder_Mitems FROM cateasy_bd.order_mitems RIGHT JOIN cateasy_bd.order ON IDOrder = FIDOrder RIGHT JOIN cateasy_bd.menuitem ON IDMenuItem = FIDMenuItem WHERE IsDrink AND !order_mitems.Delivered AND !order_mitems.Paid; ", false); //Gets the drinks awaiting delivery from the MySql database and puts them in a MySqlDataReader object. 
 
             try
             {
@@ -458,16 +365,14 @@ namespace CateringEasy
                     {
                         tlpWaiterDrinksInStandby.RowCount++;
                         tlpWaiterDrinksInStandby.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
-                        Button btnDeleteOrder = GenerateButton(Color.OrangeRed, "btnDeleteItem" + reader.GetValue(1), "Supprimmer", 8F);
-                        Button btnOrderDelivered = GenerateButton(Color.LightSeaGreen, "btnItemDelivered" + reader.GetValue(1), "Rendue", 8F);
-                        btnDeleteOrder.Click += new EventHandler(btnDeleteItem_Click); //Adds the btnDeleteItem_Click event handler to the Click event handler in the button.
+                        Button btnDeleteItem = GenerateButton(Color.OrangeRed, "btnDeleteItem" + reader.GetValue(2), "Supprimmer", 8F);
+                        Button btnItemDelivered = GenerateButton(Color.LightSeaGreen, "btnItemDelivered" + reader.GetValue(2), "Rendue", 8F);
+                        btnDeleteItem.Click += new EventHandler(btnDeleteItem_Click); //Adds the btnDeleteItem_Click event handler to the Click event handler in the button.
+                        btnItemDelivered.Click += new EventHandler(btnItemDelivered_Click); //Adds the btnItemDelivered_Click event handler to the Click event handler in the button.
                         tlpWaiterDrinksInStandby.Controls.Add(new Label { Text = "Commande " + reader.GetValue(1).ToString() + " Table " + reader.GetValue(0).ToString(), AutoSize = true }, 0, tlpWaiterDrinksInStandby.RowCount);
-                        tlpWaiterDrinksInStandby.Controls.Add(btnDeleteOrder, 1, tlpWaiterDrinksInStandby.RowCount);
-                        tlpWaiterDrinksInStandby.Controls.Add(btnOrderDelivered, 2, tlpWaiterDrinksInStandby.RowCount);
+                        tlpWaiterDrinksInStandby.Controls.Add(btnDeleteItem, 1, tlpWaiterDrinksInStandby.RowCount);
+                        tlpWaiterDrinksInStandby.Controls.Add(btnItemDelivered, 2, tlpWaiterDrinksInStandby.RowCount);
                     }
-                    Db.DbConnexion.Dispose();
-                    reader.Close();
-                    reader.Dispose();
                 }
             }
             catch (Exception e)
@@ -475,7 +380,8 @@ namespace CateringEasy
                 ExceptionManager.NewException(e, "Un problème est survenu lors du chargement des commandes à livrer. Veuillez contacter le support technique", true);
             }
             //Adding an empty label at the bottom of the TableLayoutPanel so the last row does not fill the remaining Height in the TableLayoutPanel
-            tlpWaiterDrinksInStandby.Controls.Add(new Label(), 0, tlpWaiterDrinksInStandby.RowCount = tlpWaiterOrdersCompleted.RowCount++);
+            tlpWaiterDrinksInStandby.RowCount++;
+            tlpWaiterDrinksInStandby.Controls.Add(new Label(), 2, tlpWaiterDrinksInStandby.RowCount);
         }
 
         /*
@@ -485,7 +391,7 @@ namespace CateringEasy
         {
             return new Button
             {
-                Font = new Font("Segoe UI", fontsize, FontStyle.Regular, GraphicsUnit.Point),
+                Font = new Font("Segoe UI Semibold", fontsize, FontStyle.Regular, GraphicsUnit.Point),
                 Dock = DockStyle.Fill,
                 BackColor = col,
                 Name = name,
@@ -502,7 +408,17 @@ namespace CateringEasy
         private void btnDeleteOrder_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            Db.SqlRequestNonQuery("UPDATE cateasy_bd.Order SET Completed AND Paid AND Started AND Delivered WHERE IDOrder = " + MessageBox.Show(Regex.Match(btn.Name, @"\d+$").Value.ToString()) + ";");
+            Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Completed = true, Paid = true, Started = true, Delivered = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
+        }
+
+        /*
+         * Event handler method for the Click event on dynamically generated delete order buttons. 
+         * Updates the database to indicate that the order is no longer to be treated.
+         */
+        private void btnOrderDelivered_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Delivered = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
         }
 
         /*
@@ -512,7 +428,17 @@ namespace CateringEasy
         private void btnDeleteItem_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            Db.SqlRequestNonQuery("UPDATE cateasy_bd.Order_MItems SET Completed AND Paid WHERE IDOrder_Mitems = " + Regex.Match(btn.Name, @"\d+$"));
+            Db.SqlRequestNonQuery("UPDATE cateasy_bd.order_mitems SET Delivered = true, Paid = true WHERE IDOrder_Mitems = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
+        }
+
+        /*
+         * Event handler method for the Click event on drink item delivered buttons.
+         * Updates the MySql database to indicate that the drink item is no longer to be delivered.
+         */
+        private void btnItemDelivered_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            Db.SqlRequestNonQuery("UPDATE cateasy_bd.order_mitems SET Delivered = true WHERE IDOrder_Mitems = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
         }
 
         /*
@@ -633,9 +559,29 @@ namespace CateringEasy
             {
                 ShowTableLayoutPanel(tlpWaiter, CurrentlyDisplayedTlp);
             }
-            else if (CurrentlyDisplayedTlp.Name == tlpMenu.Name && !Waiter)
+            else if (CurrentlyDisplayedTlp.Name == tlpMenu.Name)
             {
                 ShowTableLayoutPanel(tlpTable_select, CurrentlyDisplayedTlp);
+            }
+            else if(CurrentlyDisplayedTlp.Name == tlpTable_select.Name && Waiter)
+            {
+                ShowTableLayoutPanel(tlpWaiter, tlpTable_select);
+
+            }
+            else if (CurrentlyDisplayedTlp.Name == tlpTable_select.Name && !Waiter)
+            {
+                ShowTableLayoutPanel(tlpHome, tlpTable_select);
+
+            }
+            else if (CurrentlyDisplayedTlp.Name == tlpBilling.Name)
+            {
+                ShowTableLayoutPanel(tlpWaiter, tlpBilling);
+
+            }
+            else if (CurrentlyDisplayedTlp.Name == tlpWaiter.Name)
+            {
+                ShowTableLayoutPanel(tlpHome, tlpWaiter);
+
             }
             else
                 ShowTableLayoutPanel(RedirectedFromTlp, CurrentlyDisplayedTlp);
@@ -654,32 +600,36 @@ namespace CateringEasy
                 if (Regex.IsMatch(btn.Name, "btnOrderStarted*"))
                 {
                     UpdateStock(Regex.Match(btn.Name, @"\d+$").Value.ToString());
-                    Db.SqlRequestNonQuery("UPDATE cateasy_bd.Order SET Started WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
-                    UpdateStock(Regex.Match(btn.Name, @"\d+$").Value.ToString());
+                    Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
                     btn.Enabled = false;
                 }
                 //In the database, sets the order corresponding to the order id in the Button name as being ready for delivery and, if the order was not marked as started previously, calls the UpdateStock method.
                 else if (Regex.IsMatch(btn.Name, "btnOrderEnded*"))
                 {
-                    MySqlDataReader reader = Db.SqlRequest("SELECT Started FROM cateasy_bd.Order WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                    MySqlDataReader reader = Db.SqlRequest("SELECT Started FROM cateasy_bd.order WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", false);
 
-                    if (Convert.ToInt16(reader.GetValue(0)) == 0)
+                    if(reader.HasRows)
                     {
-                        Db.SqlRequestNonQuery("UPDATE cateasy_bd.Order SET Started, Completed WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
-                        UpdateStock(Regex.Match(btn.Name, @"\d+$").Value.ToString());
-                    }
-                    else
-                    {
-                        Db.SqlRequestNonQuery("UPDATE cateasy_bd.Order SET Completed WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
+                        if(reader.Read())
+                        {
+                            if (Convert.ToInt16(reader.GetValue(0)) == 0)
+                            {
+                                UpdateStock(Regex.Match(btn.Name, @"\d+$").Value.ToString());
+                                Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Started = true, Completed = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
+
+                            }
+                            else
+                            {
+                                Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Completed = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
+                            }
+                        }
                     }
 
-                    BuildCuisineHome();
                 }
                 //In the database, sets the order corresponding to the order id in the Button name as not requiering any further treatement in the application.
                 else if (Regex.IsMatch(btn.Name, "btnOrderDelete*"))
                 {
-                    Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Started = true, Completed = true, Paid = true, Delivered = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";");
-                    BuildCuisineHome(); //Rebuilds the "cuisine" home TableLayoutPanel.
+                    Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Started = true, Completed = true, Paid = true, Delivered = true WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
                 }
             }
             catch (Exception ex)
@@ -692,19 +642,16 @@ namespace CateringEasy
          */
         private static void UpdateStock(string idorder)
         {
-            Db.SqlRequestNonQuery("UPDATE cateasy_bd.Order SET Started = true, Completed = true WHERE IDOrder = " + idorder + ";");
-            MySqlDataReader reader = Db.SqlRequest("SELECT FIDMenuItem FROM cateasy_bd.Order LEFT JOIN cateasy_bd.Order_MItems ON IDOrder = FIDOrder WHERE IDOrder = " + idorder + ";");
+            //Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + idorder + ";", true);
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDMenuItem FROM cateasy_bd.order LEFT JOIN cateasy_bd.order_mitems ON IDOrder = FIDOrder WHERE IDOrder = " + idorder + ";", false);
             try
             {
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        Db.SqlRequestNonQuery("UPDATE cateasy_bd.MenuItem SET Remaining = Remaining - 1 WHERE IDMenuItem = " + reader.GetValue(0) + ";");
+                        Db.SqlRequestNonQuery("UPDATE cateasy_bd.menuitem SET Remaining = Remaining - 1 WHERE IDMenuItem = " + reader.GetValue(0) + ";", false);
                     }
-                    Db.DbConnexion.Dispose();
-                    reader.Close();
-                    reader.Dispose();
                 }
             }
             catch (Exception ex2)
@@ -721,7 +668,7 @@ namespace CateringEasy
         {
             try
             {
-                MySqlDataReader reader = Db.SqlRequest("SELECT IDTable FROM cateasy_bd.Table ORDER BY IDTable DESC;"); //Gets the tables from the MySql database and puts them in a MySqlDataReader object.
+                MySqlDataReader reader = Db.SqlRequest("SELECT IDTable FROM cateasy_bd.table ORDER BY IDTable DESC;", false); //Gets the tables from the MySql database and puts them in a MySqlDataReader object.
 
                 SelectedTable = Convert.ToInt16(txtTable_selectNumber.Text); //Tries to converts the text in the table selection TextBox to an integer.
 
@@ -741,9 +688,6 @@ namespace CateringEasy
                         else
                             lblTable_selectError.Text = "Cette table n'existe pas";
                     }
-                    Db.DbConnexion.Dispose();
-                    reader.Close();
-                    reader.Dispose();
                 }
                 // If no tables exist in the database, displays an error message.
                 else
@@ -761,7 +705,7 @@ namespace CateringEasy
 
         /*
          * Event handler method for the Click event on the confirm order button in the restaurant menu TableLayoutPanel.
-         * Adds a new order to the Database and adds the items the user has selected in the menu DataGridView.
+         * Adds a new order to the Database and adds the items the user has selected in the menu TableLayoutPanel.
          */
         private void btnMenuConfirm_Click(object sender, EventArgs e)
         {
@@ -778,7 +722,7 @@ namespace CateringEasy
                     {
                         if (!orderCreated)
                         {
-                            MySqlDataReader reader = Db.SqlRequest("INSERT INTO cateasy_bd.Order(FIDTable) VALUES(" + SelectedTable.ToString() + "); SELECT LAST_INSERT_ID();");
+                            MySqlDataReader reader = Db.SqlRequest("INSERT INTO cateasy_bd.order(FIDTable) VALUES(" + SelectedTable.ToString() + "); SELECT LAST_INSERT_ID();", true);
                             try
                             {
                                 if (reader.HasRows)
@@ -799,7 +743,9 @@ namespace CateringEasy
                                 ExceptionManager.NewException(e2, " ", true);
                             }
                         }
-                        Db.SqlRequestNonQuery("INSERT INTO cateasy_bd.Order_MItems(FIDMenuItem, FIDOrder) VALUES(" + (Regex.Match(nud.Name, @"\d+$").Value.ToString()) + ", " + orderId + ");");
+                        //Inserts the selected items(s) into the database.
+                        for(int i = 0; i < Convert.ToInt16(nud.Value.ToString()); i++)
+                            Db.SqlRequestNonQuery("INSERT INTO cateasy_bd.order_mitems(FIDMenuItem, FIDOrder) VALUES(" + (Regex.Match(nud.Name, @"\d+$").Value.ToString()) + ", " + orderId + ");", true);
                         itemSelected = true; //Sets the itemSelected boolean to indicate that an item has been selected.
                     }
                 }
@@ -820,90 +766,6 @@ namespace CateringEasy
                 btnMenuConfirm.ForeColor = Color.Red;
             }
         }
-
-        /*private void btnMenuConfirm_Click(object sender, EventArgs e)
-        {
-            string valuesToInsert = ""; //Initializing an empty string variable that will contain the menu items to add to the database.
-            bool orderCreated = false; //Initializing a Boolean variable indicating if the order has already been added to the databse.
-            bool itemSelected = false; //Initializing a Boolean variable indicating if an item has been selected in the DataGridView.
-            Int16 orderId = 0; //Inizializing an integer that will contain the inserted order id.
-            foreach (DataGridViewRow row in dgvMenu.Rows)
-            {
-                //Checks if a menu item has been selected in the TextBox DataGridViewRow of the dgvMenu DataGridView.
-                if (Convert.ToInt16(row.Cells[3].Value) > 0)
-                {
-                    //If a menu item has been selected and the order has not been created yet, inserts a new order in the database and saves the autoincremented id of the order in the orderId Int16 varialble.
-                    if(!orderCreated)
-                    {
-                        itemSelected = true; //Sets the itemSelected boolean to indicate that an item has been selected.
-                        MySqlDataReader reader = Db.SqlRequest("INSERT INTO cateasy_bd.Order(FIDTable) VALUES(" + SelectedTable.ToString() + "); SELECT LAST_INSERT_ID();");
-                        try
-                        {
-                            if (reader.HasRows)
-                            {
-                                while (reader.Read())
-                                {
-                                    orderId = Convert.ToInt16(reader.GetValue(0));
-                                    orderCreated = true;
-                                }
-                            }
-                            else
-                            {
-                                throw new Exception("Problème interne avec la base de données");
-                            }
-                        }
-                        catch (Exception e2)
-                        {
-                            ExceptionManager.NewException(e2, " ", true);
-                        }
-                    }
-
-                    //Adds the insert query corresponding to the ordered menu item to add to the database in the valuesToInsert string.
-                    for (int i = 0; i < Convert.ToInt16(row.Cells[3].Value.ToString()); i++)
-                    {
-                        try
-                        {
-                            //Gets the remaining stock of the item in the current row from the MySql database and puts it in a MySqlDataReader object.
-                            MySqlDataReader readerStock = Db.SqlRequest("SELECT Remaining FROM cateasy_bd.MenuItem WHERE IDMenuItem = " + (row.Index + 1) + ";");
-                            if (readerStock.Read() && readerStock.HasRows)
-                            {
-                                //If the current item is in sufficient quantity in the stock, adds an insert query for the current menu item to the valuesToInsert string.
-                                if (i < Convert.ToInt16(readerStock.GetValue(0).ToString()))
-                                {
-                                    valuesToInsert += "INSERT INTO cateasy_bd.Order_MItems(FIDMenuItem, FIDOrder) VALUES(" + (row.Index + 1) + ", " + orderId + ");";
-                                }
-                                else
-                                    lblOrder_confirmation.Text += "\nLe plat N' " + (row.Index + 1).ToString() + " n'a pas pu être commandé. Nous n'en avons plus suffisemment.";
-                                    break;
-                            }
-                            else
-                            {
-                                throw new Exception("Problème interne avec la base de données");
-                            }
-                        }
-                        catch (Exception e2)
-                        {
-                            ExceptionManager.NewException(e2, " ", true);
-                        }
-                    }
-                }
-            }
-            //If one or more item has been selected for order, adds the ordered item(s) to the database builds the order confirmation TableLayoutPanel and calls the ShowTableLayoutPanel method to show it.
-            if(itemSelected)
-            {
-                Db.SqlRequest(valuesToInsert);
-                BuildTlpOrderConfirm();
-                ShowTableLayoutPanel(tlpOrder_confirmation, tlpMenu);
-                btnMenuConfirm.Text = "Confirmer";
-                btnMenuConfirm.ForeColor = DefaultForeColor;
-            }
-            //If no item has been selected for order, asks the user to select an item.
-            else
-            {
-                btnMenuConfirm.Text = "Veuillez ajouter un élément à votre sélection puis re-cliquez";
-                btnMenuConfirm.ForeColor = Color.Red;
-            }
-        }*/
 
         /*
          * This method builds the order confirmation TableLayoutPanel.
@@ -932,7 +794,7 @@ namespace CateringEasy
                 }
                 if(!alreadyBuilt)
                 {
-                    Button btnReturnToWaiterHome = GenerateButton(DefaultBackColor, "btnReturnToWaiterHome", "Retour", 9F);
+                    Button btnReturnToWaiterHome = GenerateButton(DefaultBackColor, "btnReturnToWaiterHome", "Retour", 17F);
                     btnReturnToWaiterHome.Location = new Point(3, 948);
                     btnReturnToWaiterHome.Click += new EventHandler(btnReturnToHome_Click); //Adds a new btnReturnToHome_Click event handler to the btnReturnToWaiterHome Click event handler.
                     tlpOrder_confirmation.Controls.Add(btnReturnToWaiterHome, 0, 1);
@@ -996,9 +858,10 @@ namespace CateringEasy
                         TabIndex = 4,
                         TextAlign = HorizontalAlignment.Center,
                     };
-                    Button btnReturnToHomeProtection = GenerateButton(DefaultBackColor, "btnReturnToHomeProtection", "Retour à l'accueil", 9F);
+                    Button btnReturnToHomeProtection = GenerateButton(DefaultBackColor, "btnReturnToHomeProtection", "Retour à l'accueil", 12F);
                     btnReturnToHomeProtection.Location = new Point(540, 368);
                     btnReturnToHomeProtection.Anchor = AnchorStyles.Top;
+                    btnReturnToHomeProtection.Size = new Size(200, 60);
                     btnReturnToHomeProtection.Dock = DockStyle.None;
                     btnReturnToHomeProtection.Click += new EventHandler(btnReturnToHomeProtection_Click); //Adds a new btnReturnToHomeProtection_Click event handler to the Click event in the confirm password Button.
 
@@ -1021,7 +884,7 @@ namespace CateringEasy
         */
         private void btnReturnToHome_Click(object sender, EventArgs e)
         {
-            ShowTableLayoutPanel(tlpWaiter, tlpOrder_confirmation);
+            ShowTableLayoutPanel(tlpHome, tlpOrder_confirmation);
         }
         /*
         * Event handler method for the Click event on the return to home Button in the client order confirmation TableLayoutPanel. 
@@ -1064,8 +927,7 @@ namespace CateringEasy
         private void btnWaiterNewOrder_Click(object sender, EventArgs e)
         {
             Waiter = true;
-            BuildMenuList(false);
-            ShowTableLayoutPanel(tlpMenu, tlpWaiter);
+            ShowTableLayoutPanel(tlpTable_select, tlpWaiter);
         }
 
         /*
@@ -1081,6 +943,107 @@ namespace CateringEasy
             if(CurrentlyDisplayedTlp == tlpWaiter)
             {
                 BuildWaiterHome();
+            }
+        }
+
+        /*
+         * Event handler method for Click event on the "Facturer une table" Button in the waiter home TableLayoutPanel.
+         */ 
+        private void tlpWaiterNewBill_Click(object sender, EventArgs e)
+        {
+            ShowTableLayoutPanel(tlpBilling, tlpWaiter);
+        }
+
+        private void btnBillingConfirm_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedTable = Convert.ToInt16(txtBillingTableSelect.Text); //Tries to converts the text in the table selection TextBox to an integer.
+
+                MySqlDataReader readerTable = Db.SqlRequest("SELECT IDTable FROM cateasy_bd.table ORDER BY IDTable DESC;", false); //Gets the tables from the MySql database and puts them in a MySqlDataReader object.
+
+                if (readerTable.HasRows)
+                {
+                    if (readerTable.Read())
+                    {
+                        //Checks if the input table number is smaller or equal to the final table number in the database. If not, shows an error message.
+                        if (Convert.ToInt16(readerTable.GetValue(0)) >= SelectedTable)
+                        {
+                            //Resets the text of the controls in the table select TableLayoutPanel and calls the BuildMenuList method.
+                            txtBillingTableSelect.Text = "";
+                            lblBillingTableSelectError.Text = "";
+                        }
+                        else
+                        {
+                            lblBillingTableSelectError.Text = "Cette table n'existe pas";
+                            return;
+                        }
+                    }
+                }
+                // If no tables exist in the database, displays an error message.
+                else
+                {
+                    lblBillingTableSelectError.Text = "Veuillez ajouter une table dans les réglages";
+                    return;
+                }
+            }
+            //If the text property in the table selection Textbox is not convertible to an integer, displays an error message. 
+            catch
+            {
+                lblBillingTableSelectError.Text = "Veuillez entrer un nombre";
+                return;
+            }
+
+            try
+            {
+                Int16 ClientsNumber = Convert.ToInt16(txtBillingClientsNumber.Text); //Tries to converts the text in the client(s) number selection TextBox to an integer.
+
+                MySqlDataReader readerOrder = Db.SqlRequest("SELECT IDOrder, Name, Price FROM cateasy_bd.order INNER JOIN cateasy_bd.order_mitems ON IDOrder = FIDOrder RIGHT JOIN cateasy_bd.menuitem ON FIDMenuItem = IDMenuItem WHERE !order.Paid AND !order_mitems.Paid AND FIDTable = " + SelectedTable.ToString() + ";", false);
+                if (readerOrder.HasRows)
+                {
+                    Invoicer invoicer = new Invoicer();
+                    bool orderIdSaved = false;
+                    int orderId = 0;
+                    for (Int16 i = 0; i < ClientsNumber; i++)
+                    {
+                        List<string> linesToBill = new List<string>();
+                        float total = 0;
+                        int j = 0;
+                        while (readerOrder.Read())
+                        {
+                            if (readerOrder.GetInt32(0) == orderId || j == 0)
+                            {
+                                total += readerOrder.GetFloat(2) / ClientsNumber;
+                                if (!orderIdSaved)
+                                {
+                                    orderId = readerOrder.GetInt32(0);
+                                }
+                                linesToBill.Add(readerOrder.GetValue(1).ToString() + " " + (readerOrder.GetFloat(2) / ClientsNumber).ToString());
+                            }
+                            else
+                                break;
+                            j++;
+                        }
+                        invoicer.NewInvoice(linesToBill, total, "CHF" , "CateringEasy_Order" + orderId + "_InvoiceBill" + (i + 1).ToString());
+                        ShowTableLayoutPanel(tlpWaiter, tlpBilling); //Shows the waiter home TableLayoutPanel.
+                    }
+                    //Resets the text of the controls in the client(s) number TableLayoutPanel.
+                    txtBillingClientsNumber.Text = "";
+                    lblBillingClientsNumberError.Text = "";
+                }
+                // If no tables exist in the database, displays an error message.
+                else
+                {
+                    lblBillingClientsNumberError.Text = "Cette table n'a pas de commandes a facturer";
+                    return;
+                }
+            }
+            //If the text property in the client(s) number selection Textbox is not convertible to an integer, displays an error message. 
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                lblBillingClientsNumberError.Text = "Veuillez entrer un nombre";
+                return;
             }
         }
     }

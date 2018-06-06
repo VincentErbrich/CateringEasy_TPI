@@ -7,87 +7,68 @@
  * Creation date : 22/05/2018
  */
 using System;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MySql.Data.MySqlClient;
 
 namespace CateringEasy
 {
-    
     /*
-     *  CLASSE DATABASE MANAGER
-     *  Cette classe gère la connexion vers le fichier de base de données SQLite et 
-     *  éxecute les requêtes SQL envers cette dernière. 
-     *  Elle génère la dite base si elle est inexistante.
+     *  This class manages the connection the the MySqlDatabase and executes MySql commands.
      *  
-     *  SOURCES / AIDES : Remerciements à Cyril Kalbfuss, inspiré de https://blog.tigrangasparian.com/2012/02/09/getting-started-with-sqlite-in-c-part-one/ et https://www.connectionstrings.com/sqlite/
+     *  SOURCES : This class was adapted from my Database_Manager class for SQLite I did in my Pré-TPI project. 
+     *  Back in the Pré-TPI project, I was helped to develop this class by Cyril Kalbfuss, and was inspired by https://blog.tigrangasparian.com/2012/02/09/getting-started-with-sqlite-in-c-part-one/ and https://www.connectionstrings.com/sqlite/
      */
     class DatabaseManager
     {
         //Event launched once the database is updated.
         public event EventHandler<EventArgs> DatabaseUpdated;
 
-        //Database connexion object
-        public MySqlConnection DbConnexion;
-
         /*  
-         *  METHODE CONNEXION
-         *  Cette méthode crée et gère la connexion vers le fichier de base de données
-         *  Elle génère la base de données si elle est inexistante
-         *      
-         *  RETOURNE : La connexion à la base de donnée
+         * This methods initializes a connection the the database and returns it
          */
-        public void Connexion()
+        public MySqlConnection Connexion()
         {
             try
             {
-                //  La connexion est initialisée dans une instance de l'objet SQLiteConnection
-                DbConnexion = new MySqlConnection("Server=web20.swisscenter.com;Port=3306;UID=cateasy_bd;Password=P4$$w04d_?");
-                //  La connexion est ouverte
-                DbConnexion.Open();
+                // The connection is initialized in a new MySqlConnection object
+                MySqlConnection dbConnexion = new MySqlConnection("Server=web20.swisscenter.com;Port=3306;UID=cateasy_bd;Password=P4$$w04d_?");
+                // Connection is opened
+                dbConnexion.Open();
+                return dbConnexion;
             }
             catch (Exception e)
             {
                 ExceptionManager.NewException(e, "La base de données n'a pas pu être trouvée : Veuillez contacter le support technique", true);
+                return null;
             }
         }
         /*
-         *  Méthode SQLREQUEST
-         *  Execute la requête SQLite passée en entrée
-         *  
-         *  RETOURNE :  le résultat de la requête
+         * This method executes the Sql request in the parameters and returns the results in a MySqlDataReader object. If specified in the parameters, triggers a DatabaseUpdated event
          */
-        public MySqlDataReader SqlRequest(string Request)
+        public MySqlDataReader SqlRequest(string Request, bool TriggerUpdateEvent)
         {
             if (Request == null)
             {
                 throw new ArgumentNullException(nameof(Request));
             }
-            //  Initialise la commande dans une nouvelle instance de l'objet SQLiteCommand
-            //SQLiteCommand command = new SQLiteCommand(Request, Connexion());
             try
             {
-                Connexion();
-                MySqlCommand cmd = new MySqlCommand(Request, DbConnexion);
-                MySqlDataReader reader = cmd.ExecuteReader();
+                MySqlConnection dbConnexion = Connexion(); // Connecting to the database
+                MySqlCommand cmd = new MySqlCommand(Request, dbConnexion); // Initializes the command using the connection and the request in the parameters.
+                MySqlDataReader reader = cmd.ExecuteReader(); // Executes the command and puts the results in a MySqlDataReader.
 
-                //If the DatabaseUpdated EventHandler has been assigned from FormMain, invokes DatabaseUpdated EventHandler
-                DatabaseUpdated?.Invoke(this, new EventArgs());
-                //  Retourne le résultat de la requête
+                //If the DatabaseUpdated EventHandler has been assigned from FormMain and the trigger event parameter is true, invokes DatabaseUpdated EventHandler
+                if(TriggerUpdateEvent)
+                    DatabaseUpdated?.Invoke(this, new EventArgs());
+                //  Returns the results
                 return reader;
             }
             catch(Exception e)
             {
-                //  Exectute ce code en cas d'erreur :
-                //  Passe l'exception à Exception_Manager
                 ExceptionManager.NewException(e, "Requête incorrecte", false);
-                //  Ne retourne rien
                 return null;
             }     
         }
-        public void SqlRequestNonQuery(string Request)
+        public void SqlRequestNonQuery(string Request, bool TriggerUpdateEvent)
         {
             if (Request == null)
             {
@@ -97,17 +78,17 @@ namespace CateringEasy
             //SQLiteCommand command = new SQLiteCommand(Request, Connexion());
             try
             {
-                MySqlCommand cmd = new MySqlCommand(Request, DbConnexion);
-                cmd.ExecuteNonQuery();
+                MySqlConnection dbConnexion = Connexion(); // Connecting to the database
+                MySqlCommand cmd = new MySqlCommand(Request, dbConnexion); // Initializes the command using the connection and the request in the parameters.
+                cmd.ExecuteNonQuery(); // Executes the command.
 
-                //If the DatabaseUpdated EventHandler has been assigned from FormMain, invokes DatabaseUpdated EventHandler
-                DatabaseUpdated?.Invoke(this, new EventArgs());
+                //If the DatabaseUpdated EventHandler has been assigned from FormMain and the trigger event parameter is true, invokes DatabaseUpdated EventHandler
+                if (TriggerUpdateEvent)
+                    DatabaseUpdated?.Invoke(this, new EventArgs());
                 cmd.Dispose();
             }
             catch (Exception e)
             {
-                //  Exectute ce code en cas d'erreur :
-                //  Passe l'exception à Exception_Manager
                 ExceptionManager.NewException(e, "Requête incorrecte", false);
             }
         }

@@ -20,7 +20,7 @@ USE `cateasy_bd` ;
 -- -----------------------------------------------------
 -- Table `cateasy_bd`.`Table`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Table` (
+CREATE TABLE IF NOT EXISTS `cateasy_bd`.`table` (
   `IDTable` INT NOT NULL,
   PRIMARY KEY (`IDTable`));
 
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Table` (
 -- -----------------------------------------------------
 -- Table `cateasy_bd`.`Order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order` (
+CREATE TABLE IF NOT EXISTS `cateasy_bd`.`order` (
   `IDOrder` INT NOT NULL AUTO_INCREMENT,
   `FIDTable` INT NOT NULL,
   `Completed` TINYINT(1) NOT NULL DEFAULT 0,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order` (
   INDEX `fk_Order_Table_idx` (`FIDTable` ASC),
   CONSTRAINT `fk_Order_Table`
     FOREIGN KEY (`FIDTable`)
-    REFERENCES `cateasy_bd`.`Table` (`IDTable`)
+    REFERENCES `cateasy_bd`.`table` (`IDTable`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order` (
 -- -----------------------------------------------------
 -- Table `cateasy_bd`.`MenuItem`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cateasy_bd`.`MenuItem` (
+CREATE TABLE IF NOT EXISTS `cateasy_bd`.`menuitem` (
   `IDMenuItem` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(50) NOT NULL,
   `Price` FLOAT UNSIGNED NOT NULL,
@@ -60,32 +60,32 @@ CREATE TABLE IF NOT EXISTS `cateasy_bd`.`MenuItem` (
 -- -----------------------------------------------------
 -- Table `cateasy_bd`.`Settings`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Settings` (
-  `Password` VARCHAR(255) NOT NULL DEFAULT 'admin',
-  `Currency` VARCHAR(6) NOT NULL DEFAULT 'CHF');
+CREATE TABLE IF NOT EXISTS `cateasy_bd`.`settings` (
+  `Password` VARCHAR(255) NOT NULL,
+  `Currency` VARCHAR(6) NOT NULL);
 
 
 -- -----------------------------------------------------
 -- Table `cateasy_bd`.`Order_MItems`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cateasy_bd`.`Order_MItems` (
+CREATE TABLE IF NOT EXISTS `cateasy_bd`.`order_mitems` (
   `IDOrder_Mitems` INT NOT NULL AUTO_INCREMENT,
   `FIDOrder` INT NOT NULL,
   `FIDMenuItem` INT NOT NULL,
-  `Delivered` TINYINT(1) NOT NULL,
-  `Paid` TINYINT(1) NOT NULL,
+  `Delivered` TINYINT(1) NOT NULL DEFAULT 0,
+  `Paid` TINYINT(1) NOT NULL DEFAULT 0,
   INDEX `fk_Order_MItems_MenuItem1_idx` (`FIDMenuItem` ASC),
   INDEX `fk_Order_MItems_Order1_idx` (`FIDOrder` ASC),
   UNIQUE INDEX `IDOrder_Mitems_UNIQUE` (`IDOrder_Mitems` ASC),
   PRIMARY KEY (`IDOrder_Mitems`),
   CONSTRAINT `fk_Order_MItems_MenuItem1`
     FOREIGN KEY (`FIDMenuItem`)
-    REFERENCES `cateasy_bd`.`MenuItem` (`IDMenuItem`)
+    REFERENCES `cateasy_bd`.`menuitem` (`IDMenuItem`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_MItems_Order1`
     FOREIGN KEY (`FIDOrder`)
-    REFERENCES `cateasy_bd`.`Order` (`IDOrder`)
+    REFERENCES `cateasy_bd`.`order` (`IDOrder`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
