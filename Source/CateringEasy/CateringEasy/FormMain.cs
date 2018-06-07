@@ -70,6 +70,30 @@ namespace CateringEasy
             //MenuImages.LoadMenuImages();
             MenuBuilt = false;
         }
+
+        /*
+         * This method decrements the stock of the menu items contained in the order corresponding to the idorder parameter.
+         */
+        private static void UpdateStock(string idorder)
+        {
+            //Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + idorder + ";", true);
+            MySqlDataReader reader = Db.SqlRequest("SELECT FIDMenuItem FROM cateasy_bd.order LEFT JOIN cateasy_bd.order_mitems ON IDOrder = FIDOrder WHERE IDOrder = " + idorder + ";", false);
+            try
+            {
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        Db.SqlRequestNonQuery("UPDATE cateasy_bd.menuitem SET Remaining = Remaining - 1 WHERE IDMenuItem = " + reader.GetValue(0) + ";", false);
+                    }
+                }
+            }
+            catch (Exception ex2)
+            {
+                ExceptionManager.NewException(ex2, "Nous avons rencontré un problème lors de la mise à jour du stock. Veuillez contacter le support technique", true);
+            }
+        }
+
         /*
          * This method saves the TableLayoutPanel currently displayed to indicate from which TableLayoutPanel 
          * the display of the currently shown TableLayoutPanel has been requested, saves the TableLayoutPanel to show
@@ -149,9 +173,9 @@ namespace CateringEasy
                         {
                             tlpMenuList.RowCount++;
                             tlpMenu.RowStyles.Add(new RowStyle { SizeType = SizeType.Absolute, Height = 40 });
-                            tlpMenuList.Controls.Add(new Label { Text = readerMenu.GetValue(1).ToString(), Height = 38, AutoSize = false, Font = new Font("Segoe UI Semibold", 10F, FontStyle.Regular, GraphicsUnit.Point) }, 0, tlpMenuList.RowCount);
-                            tlpMenuList.Controls.Add(new Label { Text = readerMenu.GetValue(2).ToString(), Height = 38, AutoSize = false, Font = new Font("Segoe UI Semibold", 10F, FontStyle.Regular, GraphicsUnit.Point) }, 1, tlpMenuList.RowCount);
-                            tlpMenuList.Controls.Add(new NumericUpDown { Value = 0, Name = "nudQuantityItem" + readerMenu.GetValue(0), Maximum = readerMenu.GetInt16(3), Minimum = 0, Height = 38, Margin = new Padding(0, 0, 0, 0), AutoSize = false, Font = new Font("Segoe UI Semibold", 10F, FontStyle.Regular, GraphicsUnit.Point) }, 3, tlpMenuList.RowCount);
+                            tlpMenuList.Controls.Add(new Label { Text = readerMenu.GetValue(1).ToString(), Height = 38, AutoSize = true, Font = new Font("Segoe UI Semibold", 12F, FontStyle.Regular, GraphicsUnit.Point) }, 0, tlpMenuList.RowCount);
+                            tlpMenuList.Controls.Add(new Label { Text = readerMenu.GetValue(2).ToString(), Height = 38, AutoSize = false, Font = new Font("Segoe UI Semibold", 12F, FontStyle.Regular, GraphicsUnit.Point) }, 1, tlpMenuList.RowCount);
+                            tlpMenuList.Controls.Add(new NumericUpDown { Value = 0, Name = "nudQuantityItem" + readerMenu.GetValue(0), Maximum = readerMenu.GetInt16(3), Minimum = 0, Height = 38, Margin = new Padding(0, 0, 0, 0), AutoSize = false, Font = new Font("Segoe UI Semibold", 14F, FontStyle.Regular, GraphicsUnit.Point) }, 3, tlpMenuList.RowCount);
                         }
                     }
                 }
@@ -161,31 +185,7 @@ namespace CateringEasy
                 }
             }
         }
- 
-        /*
-         * Event handler method managing clicks in the menu DataGridView. 
-         */
-        private void dgvMenu_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            var senderGrid = (DataGridView)sender; //Casts the sender object as a DataGridView
 
-            //Checks that the click was done on a button column.
-            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
-            {
-                //If the "Ajouter" button column has been clicked, increases the value in the TextBox situated on the same row representing the number of times the item has been selected.
-                if (e.ColumnIndex == 2 && Convert.ToInt32(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) >= 0)
-                {
-                    int TimesSelected = Convert.ToInt16(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) + 1;
-                    senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value = TimesSelected.ToString();
-                }
-                //If the "Retirer" button column has been clicked, decreases the value in the TextBox situated on the same row representing the number of times the item has been selected.
-                else if (e.ColumnIndex == 4 && Convert.ToInt32(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) > 0)
-                {
-                    int TimesSelected = Convert.ToInt16(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) - 1;
-                    senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value = TimesSelected.ToString();
-                }
-            }
-        }
         /*
          * This method builds the "Cuisine" part of the application 
          */
@@ -294,7 +294,6 @@ namespace CateringEasy
             }
             tlpCuisine.Controls.Add(accCuisine, 0, 1);  //Adds the Accordion in the "Cuisine" home TableLayoutPanel.
         }
-
         /*
          * This method builds the Waiter home. 
          * It requests the BuildWaiterOrdersTableLayoutPanel method to build the TableLayoutPanel containing the orders awaiting delivery and
@@ -315,6 +314,11 @@ namespace CateringEasy
             tlpWaiterOrdersCompleted.RowCount = 0;
             tlpWaiterOrdersCompleted.Controls.Clear();
             tlpWaiterOrdersCompleted.RowStyles.Clear();
+
+            //Build header
+            tlpWaiterOrdersCompleted.RowCount++;
+            tlpWaiterOrdersCompleted.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpWaiterOrdersCompleted.Controls.Add(new Label { Text = "Commandes en attente de livraison", AutoSize = true, Font = new Font( "Segoe UI Semibold", 10F, FontStyle.Regular, GraphicsUnit.Point) }, 0, tlpWaiterOrdersCompleted.RowCount);
 
             MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, IDOrder FROM cateasy_bd.order WHERE Completed AND !Delivered AND !Paid;", false); //Gets the orders awaiting delivery from the MySql database and puts them in a MySqlDataReader object.
 
@@ -354,6 +358,12 @@ namespace CateringEasy
             tlpWaiterDrinksInStandby.RowCount = 0;
             tlpWaiterDrinksInStandby.Controls.Clear();
             tlpWaiterDrinksInStandby.RowStyles.Clear();
+
+            //Build header
+            tlpWaiterDrinksInStandby.RowCount++;
+            tlpWaiterDrinksInStandby.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpWaiterDrinksInStandby.Controls.Add(new Label { Text = "Boissons en attente de livraison", AutoSize = true,Font = new Font("Segoe UI Semibold", 10F, FontStyle.Regular, GraphicsUnit.Point) }, 0, tlpWaiterDrinksInStandby.RowCount);
+
             MySqlDataReader reader = Db.SqlRequest("SELECT FIDTable, Name, IDOrder_Mitems FROM cateasy_bd.order_mitems RIGHT JOIN cateasy_bd.order ON IDOrder = FIDOrder RIGHT JOIN cateasy_bd.menuitem ON IDMenuItem = FIDMenuItem WHERE IsDrink AND !order_mitems.Delivered AND !order_mitems.Paid; ", false); //Gets the drinks awaiting delivery from the MySql database and puts them in a MySqlDataReader object. 
 
             try
@@ -369,7 +379,7 @@ namespace CateringEasy
                         Button btnItemDelivered = GenerateButton(Color.LightSeaGreen, "btnItemDelivered" + reader.GetValue(2), "Rendue", 8F);
                         btnDeleteItem.Click += new EventHandler(btnDeleteItem_Click); //Adds the btnDeleteItem_Click event handler to the Click event handler in the button.
                         btnItemDelivered.Click += new EventHandler(btnItemDelivered_Click); //Adds the btnItemDelivered_Click event handler to the Click event handler in the button.
-                        tlpWaiterDrinksInStandby.Controls.Add(new Label { Text = "Commande " + reader.GetValue(1).ToString() + " Table " + reader.GetValue(0).ToString(), AutoSize = true }, 0, tlpWaiterDrinksInStandby.RowCount);
+                        tlpWaiterDrinksInStandby.Controls.Add(new Label { Text = reader.GetValue(1).ToString() + " Table " + reader.GetValue(0).ToString(), AutoSize = true }, 0, tlpWaiterDrinksInStandby.RowCount);
                         tlpWaiterDrinksInStandby.Controls.Add(btnDeleteItem, 1, tlpWaiterDrinksInStandby.RowCount);
                         tlpWaiterDrinksInStandby.Controls.Add(btnItemDelivered, 2, tlpWaiterDrinksInStandby.RowCount);
                     }
@@ -385,20 +395,156 @@ namespace CateringEasy
         }
 
         /*
-         * This method returns a new button according to the the parameters of the method.
+         * This method builds the order confirmation TableLayoutPanel.
          */
-        private static Button GenerateButton(Color col, string name, string text, float fontsize)
+        private void BuildTlpOrderConfirm()
         {
-            return new Button
+            // If the current user is a waiter and the TableLayoutPanel has not been built for his usage, builds the order confirmation TableLayoutPanel without password protection.
+            if (Waiter)
             {
-                Font = new Font("Segoe UI Semibold", fontsize, FontStyle.Regular, GraphicsUnit.Point),
-                Dock = DockStyle.Fill,
-                BackColor = col,
-                Name = name,
-                Text = text,
-                UseVisualStyleBackColor = true,
-                FlatStyle = FlatStyle.Flat,
-            };
+                bool alreadyBuilt = false;
+                lblOrder_confirmation.Text = "Votre commande à bien été reçue";
+                foreach (Control c in tlpOrder_confirmation.Controls)
+                {
+                    //Removes the password protection TableLayoutPanel if it is contained in the order confirmation TableLayoutPanel.
+                    if (c.Name == "tlpReturnToHomeProtection")
+                    {
+                        tlpOrder_confirmation.Controls.Remove(c);
+                        break;
+                    }
+                    //Sets the alreadyBuilt Boolean variable as true if the return Button for the waiter has already been added to the order confirmation TableLayoutPanel.
+                    else if (c.Name == "btnWaiterReturn")
+                    {
+                        alreadyBuilt = true;
+                        break;
+                    }
+                }
+                if (!alreadyBuilt)
+                {
+                    Button btnReturnToWaiterHome = GenerateButton(DefaultBackColor, "btnReturnToWaiterHome", "Retour", 17F);
+                    btnReturnToWaiterHome.Location = new Point(3, 948);
+                    btnReturnToWaiterHome.Click += new EventHandler(btnReturnToHome_Click); //Adds a new btnReturnToHome_Click event handler to the btnReturnToWaiterHome Click event handler.
+                    tlpOrder_confirmation.Controls.Add(btnReturnToWaiterHome, 0, 1);
+                }
+            }
+            //If the current user is a client and the order confirmation TableLayoutPanel has not already been built for his usage, builds the order confirmation TableLayoutPanel with a password protection TableLayoutPanel for the staff parts of the applications.
+            else
+            {
+                bool alreadyBuilt = false;
+                foreach (Control c in tlpOrder_confirmation.Controls)
+                {
+                    //Removes the return to waiter home Button if it is contained in the order confirmation TableLayoutPanel.
+                    if (c.Name == "btnWaiterReturn")
+                    {
+                        tlpOrder_confirmation.Controls.Remove(c);
+                        break;
+                    }
+                    //Sets the alreadyBuilt Boolean variable as true if the password protection TextBox has already been added to the order confirmation TableLayoutPanel.
+                    else if (c.Name == "txtReturnToHomeProtection")
+                    {
+                        c.ResetText();
+                        alreadyBuilt = true;
+                        break;
+                    }
+
+                }
+                //If password protection TableLayoutPanel has not been built, initializes a new TableLayoutPanel ands adds the password protection controls to it.
+                if (!alreadyBuilt)
+                {
+                    TableLayoutPanel tlpReturnToHomeProtection = new TableLayoutPanel
+                    {
+                        ColumnCount = 2,
+                        Dock = DockStyle.Fill,
+                        Location = new Point(3, 468),
+                        Name = "tlpReturnToHomeProtection",
+                        RowCount = 2,
+                        Size = new Size(1074, 591),
+                        TabIndex = 3,
+                    };
+                    Label lblReturnToHomeProtection = new Label
+                    {
+                        Anchor = AnchorStyles.Right,
+                        AutoSize = true,
+                        Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0),
+                        Location = new Point(237, 137),
+                        Name = "lblReturnToHomeProtection",
+                        Size = new Size(297, 90),
+                        TabIndex = 0,
+                        Text = "Mot de passe \r\n(Pour le personnel)",
+                    };
+                    TextBox txtReturnToHomeProtection = new TextBox
+                    {
+                        Anchor = AnchorStyles.Left,
+                        BorderStyle = BorderStyle.FixedSingle,
+                        Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0),
+                        Location = new Point(540, 151),
+                        MinimumSize = new Size(146, 27),
+                        Name = "txtReturnToHomeProtection",
+                        PasswordChar = '*',
+                        Size = new Size(531, 63),
+                        TabIndex = 4,
+                        TextAlign = HorizontalAlignment.Center,
+                    };
+                    Button btnReturnToHomeProtection = GenerateButton(DefaultBackColor, "btnReturnToHomeProtection", "Retour à l'accueil", 12F);
+                    btnReturnToHomeProtection.Location = new Point(540, 368);
+                    btnReturnToHomeProtection.Anchor = AnchorStyles.Top;
+                    btnReturnToHomeProtection.Size = new Size(200, 60);
+                    btnReturnToHomeProtection.Dock = DockStyle.None;
+                    btnReturnToHomeProtection.Click += new EventHandler(btnReturnToHomeProtection_Click); //Adds a new btnReturnToHomeProtection_Click event handler to the Click event in the confirm password Button.
+
+                    tlpReturnToHomeProtection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+                    tlpReturnToHomeProtection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+                    tlpReturnToHomeProtection.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+                    tlpReturnToHomeProtection.RowStyles.Add(new RowStyle(SizeType.Absolute, 226F));
+
+                    tlpReturnToHomeProtection.Controls.Add(lblReturnToHomeProtection, 0, 0);
+                    tlpReturnToHomeProtection.Controls.Add(btnReturnToHomeProtection, 1, 1);
+                    tlpReturnToHomeProtection.Controls.Add(txtReturnToHomeProtection, 1, 0);
+
+                    tlpOrder_confirmation.Controls.Add(tlpReturnToHomeProtection, 0, 1); //Adds the password protection TableLayoutPanel to the order confirmation TableLayoutPanel.
+                }
+            }
+        }
+
+        /*
+         * Event handler method for the DatabaseUpdated event handler in the DatabaseManager object.
+         * By calling the appropriate methods, rebuilds the currently displayed lists so that they match the new values in the MySql database.
+         */
+        private void DatabaseUpdated(object sender, EventArgs e)
+        {
+            if (CurrentlyDisplayedTlp == tlpCuisine)
+            {
+                BuildCuisineHome();
+            }
+            if (CurrentlyDisplayedTlp == tlpWaiter)
+            {
+                BuildWaiterHome();
+            }
+        }
+
+        /*
+         * Event handler method managing clicks in the menu DataGridView. 
+         */
+        private void dgvMenu_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var senderGrid = (DataGridView)sender; //Casts the sender object as a DataGridView
+
+            //Checks that the click was done on a button column.
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+            {
+                //If the "Ajouter" button column has been clicked, increases the value in the TextBox situated on the same row representing the number of times the item has been selected.
+                if (e.ColumnIndex == 2 && Convert.ToInt32(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) >= 0)
+                {
+                    int TimesSelected = Convert.ToInt16(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) + 1;
+                    senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value = TimesSelected.ToString();
+                }
+                //If the "Retirer" button column has been clicked, decreases the value in the TextBox situated on the same row representing the number of times the item has been selected.
+                else if (e.ColumnIndex == 4 && Convert.ToInt32(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) > 0)
+                {
+                    int TimesSelected = Convert.ToInt16(senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value) - 1;
+                    senderGrid.Rows[e.RowIndex].Cells["dgtSelected"].Value = TimesSelected.ToString();
+                }
+            }
         }
 
         /*
@@ -439,78 +585,6 @@ namespace CateringEasy
         {
             Button btn = sender as Button;
             Db.SqlRequestNonQuery("UPDATE cateasy_bd.order_mitems SET Delivered = true WHERE IDOrder_Mitems = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", true);
-        }
-
-        /*
-         * This method returns a new Accordion Control object.
-         */
-        private static Accordion BuildOrdersAccordion()
-        {
-            return new Accordion
-            {
-                AddResizeBars = false,
-                AllowMouseResize = false,
-                AnimateCloseEffect = ((AnimateWindowFlags.VerticalNegative | AnimateWindowFlags.Hide)
-                            | AnimateWindowFlags.Slide),
-                AnimateCloseMillis = 100,
-                AnimateOpenEffect = ((AnimateWindowFlags.VerticalPositive | AnimateWindowFlags.Show)
-                            | AnimateWindowFlags.Slide),
-                AnimateOpenMillis = 100,
-                AutoFixDockStyle = true,
-                AutoScroll = true,
-                AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                BackColor = Color.WhiteSmoke,
-                CheckBoxFactory = null,
-                CheckBoxMargin = new Padding(2),
-                ContentBackColor = null,
-                ContentMargin = new Padding(15, 5, 15, 5),
-                ContentPadding = new Padding(1),
-                ControlBackColor = null,
-                ControlMinimumHeightIsItsPreferredHeight = true,
-                ControlMinimumWidthIsItsPreferredWidth = true,
-                Dock = DockStyle.Fill,
-                DownArrow = null,
-                FillHeight = true,
-                FillLastOpened = false,
-                FillModeGrowOnly = false,
-                FillResetOnCollapse = false,
-                FillWidth = true,
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0),
-                GrabCursor = Cursors.SizeNS,
-                GrabRequiresPositiveFillWeight = true,
-                GrabWidth = 6,
-                GrowAndShrink = true,
-                Insets = new Padding(10),
-                Location = new Point(3, 39),
-                Name = "accCuisine",
-                OpenOnAdd = false,
-                OpenOneOnly = false,
-                Padding = new Padding(10),
-                ResizeBarFactory = null,
-                ResizeBarsAlign = 0.5D,
-                ResizeBarsArrowKeyDelta = 10,
-                ResizeBarsFadeInMillis = 800,
-                ResizeBarsFadeOutMillis = 800,
-                ResizeBarsFadeProximity = 24,
-                ResizeBarsFill = 1D,
-                ResizeBarsKeepFocusAfterMouseDrag = false,
-                ResizeBarsKeepFocusIfControlOutOfView = true,
-                ResizeBarsKeepFocusOnClick = true,
-                ResizeBarsMargin = null,
-                ResizeBarsMinimumLength = 50,
-                ResizeBarsStayInViewOnArrowKey = true,
-                ResizeBarsStayInViewOnMouseDrag = true,
-                ResizeBarsStayVisibleIfFocused = true,
-                ResizeBarsTabStop = true,
-                ShowPartiallyVisibleResizeBars = false,
-                ShowToolMenu = true,
-                ShowToolMenuOnHoverWhenClosed = false,
-                ShowToolMenuOnRightClick = true,
-                ShowToolMenuRequiresPositiveFillWeight = false,
-                Size = new Size(1074, 999),
-                TabIndex = 3,
-                UpArrow = null
-            };
         }
 
         /*
@@ -563,7 +637,7 @@ namespace CateringEasy
             {
                 ShowTableLayoutPanel(tlpTable_select, CurrentlyDisplayedTlp);
             }
-            else if(CurrentlyDisplayedTlp.Name == tlpTable_select.Name && Waiter)
+            else if (CurrentlyDisplayedTlp.Name == tlpTable_select.Name && Waiter)
             {
                 ShowTableLayoutPanel(tlpWaiter, tlpTable_select);
 
@@ -586,6 +660,7 @@ namespace CateringEasy
             else
                 ShowTableLayoutPanel(RedirectedFromTlp, CurrentlyDisplayedTlp);
         }
+
         /*
          * Event handler method for Click event on buttons generated dynamically in the Cuisine home TableLayoutPanel.
          * Depending on which button is clicked, marks an order as started, marks an order as ended or deletes the order.
@@ -608,9 +683,9 @@ namespace CateringEasy
                 {
                     MySqlDataReader reader = Db.SqlRequest("SELECT Started FROM cateasy_bd.order WHERE IDOrder = " + Regex.Match(btn.Name, @"\d+$").Value.ToString() + ";", false);
 
-                    if(reader.HasRows)
+                    if (reader.HasRows)
                     {
-                        if(reader.Read())
+                        if (reader.Read())
                         {
                             if (Convert.ToInt16(reader.GetValue(0)) == 0)
                             {
@@ -635,28 +710,6 @@ namespace CateringEasy
             catch (Exception ex)
             {
                 ExceptionManager.NewException(ex, "Nous avons rencontré un problème lors de la mise à jour de la commande. Veuillez contacter le support technique.", false);
-            }
-        }
-        /*
-         * This method decrements the stock of the menu items contained in the order corresponding to the idorder parameter.
-         */
-        private static void UpdateStock(string idorder)
-        {
-            //Db.SqlRequestNonQuery("UPDATE cateasy_bd.order SET Started = true WHERE IDOrder = " + idorder + ";", true);
-            MySqlDataReader reader = Db.SqlRequest("SELECT FIDMenuItem FROM cateasy_bd.order LEFT JOIN cateasy_bd.order_mitems ON IDOrder = FIDOrder WHERE IDOrder = " + idorder + ";", false);
-            try
-            {
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        Db.SqlRequestNonQuery("UPDATE cateasy_bd.menuitem SET Remaining = Remaining - 1 WHERE IDMenuItem = " + reader.GetValue(0) + ";", false);
-                    }
-                }
-            }
-            catch (Exception ex2)
-            {
-                ExceptionManager.NewException(ex2, "Nous avons rencontré un problème lors de la mise à jour du stock. Veuillez contacter le support technique", true);
             }
         }
 
@@ -744,7 +797,7 @@ namespace CateringEasy
                             }
                         }
                         //Inserts the selected items(s) into the database.
-                        for(int i = 0; i < Convert.ToInt16(nud.Value.ToString()); i++)
+                        for (int i = 0; i < Convert.ToInt16(nud.Value.ToString()); i++)
                             Db.SqlRequestNonQuery("INSERT INTO cateasy_bd.order_mitems(FIDMenuItem, FIDOrder) VALUES(" + (Regex.Match(nud.Name, @"\d+$").Value.ToString()) + ", " + orderId + ");", true);
                         itemSelected = true; //Sets the itemSelected boolean to indicate that an item has been selected.
                     }
@@ -768,120 +821,9 @@ namespace CateringEasy
         }
 
         /*
-         * This method builds the order confirmation TableLayoutPanel.
+         * Event handler method for the Click event on the return to home Button in the waiter order confirmation TableLayoutPanel. 
+         * Shows the waiter home TableLayoutPanel.
          */
-        private void BuildTlpOrderConfirm()
-        {
-            // If the current user is a waiter and the TableLayoutPanel has not been built for his usage, builds the order confirmation TableLayoutPanel without password protection.
-            if (Waiter)
-            {
-                bool alreadyBuilt = false;
-                lblOrder_confirmation.Text = "Votre commande à bien été reçue";
-                foreach(Control c in tlpOrder_confirmation.Controls)
-                {
-                    //Removes the password protection TableLayoutPanel if it is contained in the order confirmation TableLayoutPanel.
-                    if (c.Name == "tlpReturnToHomeProtection")
-                    {
-                        tlpOrder_confirmation.Controls.Remove(c);
-                        break;
-                    }
-                    //Sets the alreadyBuilt Boolean variable as true if the return Button for the waiter has already been added to the order confirmation TableLayoutPanel.
-                    else if (c.Name == "btnWaiterReturn")
-                    {
-                        alreadyBuilt = true;
-                        break;
-                    }
-                }
-                if(!alreadyBuilt)
-                {
-                    Button btnReturnToWaiterHome = GenerateButton(DefaultBackColor, "btnReturnToWaiterHome", "Retour", 17F);
-                    btnReturnToWaiterHome.Location = new Point(3, 948);
-                    btnReturnToWaiterHome.Click += new EventHandler(btnReturnToHome_Click); //Adds a new btnReturnToHome_Click event handler to the btnReturnToWaiterHome Click event handler.
-                    tlpOrder_confirmation.Controls.Add(btnReturnToWaiterHome, 0, 1);
-                }
-            }
-            //If the current user is a client and the order confirmation TableLayoutPanel has not already been built for his usage, builds the order confirmation TableLayoutPanel with a password protection TableLayoutPanel for the staff parts of the applications.
-            else
-            {
-                bool alreadyBuilt = false;
-                foreach (Control c in tlpOrder_confirmation.Controls)
-                {
-                    //Removes the return to waiter home Button if it is contained in the order confirmation TableLayoutPanel.
-                    if (c.Name == "btnWaiterReturn")
-                    {
-                        tlpOrder_confirmation.Controls.Remove(c);
-                        break;
-                    }
-                    //Sets the alreadyBuilt Boolean variable as true if the password protection TextBox has already been added to the order confirmation TableLayoutPanel.
-                    else if (c.Name == "txtReturnToHomeProtection")
-                    {
-                        c.ResetText();
-                        alreadyBuilt = true;
-                        break;
-                    }
-                        
-                }
-                //If password protection TableLayoutPanel has not been built, initializes a new TableLayoutPanel ands adds the password protection controls to it.
-                if (!alreadyBuilt)
-                {
-                    TableLayoutPanel tlpReturnToHomeProtection = new TableLayoutPanel
-                    {
-                        ColumnCount = 2,
-                        Dock = DockStyle.Fill,
-                        Location = new Point(3, 468),
-                        Name = "tlpReturnToHomeProtection",
-                        RowCount = 2,
-                        Size = new Size(1074, 591),
-                        TabIndex = 3,
-                    };
-                    Label lblReturnToHomeProtection = new Label
-                    {
-                        Anchor = AnchorStyles.Right,
-                        AutoSize = true,
-                        Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0),
-                        Location = new Point(237, 137),
-                        Name = "lblReturnToHomeProtection",
-                        Size = new Size(297, 90),
-                        TabIndex = 0,
-                        Text = "Mot de passe \r\n(Pour le personnel)",
-                    };
-                    TextBox txtReturnToHomeProtection = new TextBox
-                    {
-                        Anchor = AnchorStyles.Left,
-                        BorderStyle = BorderStyle.FixedSingle,
-                        Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0),
-                        Location = new Point(540, 151),
-                        MinimumSize = new Size(146, 27),
-                        Name = "txtReturnToHomeProtection",
-                        PasswordChar = '*',
-                        Size = new Size(531, 63),
-                        TabIndex = 4,
-                        TextAlign = HorizontalAlignment.Center,
-                    };
-                    Button btnReturnToHomeProtection = GenerateButton(DefaultBackColor, "btnReturnToHomeProtection", "Retour à l'accueil", 12F);
-                    btnReturnToHomeProtection.Location = new Point(540, 368);
-                    btnReturnToHomeProtection.Anchor = AnchorStyles.Top;
-                    btnReturnToHomeProtection.Size = new Size(200, 60);
-                    btnReturnToHomeProtection.Dock = DockStyle.None;
-                    btnReturnToHomeProtection.Click += new EventHandler(btnReturnToHomeProtection_Click); //Adds a new btnReturnToHomeProtection_Click event handler to the Click event in the confirm password Button.
-
-                    tlpReturnToHomeProtection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-                    tlpReturnToHomeProtection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-                    tlpReturnToHomeProtection.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-                    tlpReturnToHomeProtection.RowStyles.Add(new RowStyle(SizeType.Absolute, 226F));
-
-                    tlpReturnToHomeProtection.Controls.Add(lblReturnToHomeProtection, 0, 0);
-                    tlpReturnToHomeProtection.Controls.Add(btnReturnToHomeProtection, 1, 1);
-                    tlpReturnToHomeProtection.Controls.Add(txtReturnToHomeProtection, 1, 0);
-
-                    tlpOrder_confirmation.Controls.Add(tlpReturnToHomeProtection, 0, 1); //Adds the password protection TableLayoutPanel to the order confirmation TableLayoutPanel.
-                }
-            }
-        }
-       /*
-        * Event handler method for the Click event on the return to home Button in the waiter order confirmation TableLayoutPanel. 
-        * Shows the waiter home TableLayoutPanel.
-        */
         private void btnReturnToHome_Click(object sender, EventArgs e)
         {
             ShowTableLayoutPanel(tlpHome, tlpOrder_confirmation);
@@ -917,13 +859,13 @@ namespace CateringEasy
                 }
                 break;
             }
-             
+
         }
         /*
          * Event handler method for the Click event on the new order button in the waiter home TableLayoutPanel.
          * Sets the Waiter property as true to indicate that the current user is a waiter.
          * Builds an shows the restaurant menu TableLayoutPanel.
-         */ 
+         */
         private void btnWaiterNewOrder_Click(object sender, EventArgs e)
         {
             Waiter = true;
@@ -931,24 +873,8 @@ namespace CateringEasy
         }
 
         /*
-         * Event handler method for the DatabaseUpdated event handler in the DatabaseManager object.
-         * By calling the appropriate methods, rebuilds the currently displayed lists so that they match the new values in the MySql database.
-         */ 
-        private void DatabaseUpdated(object sender, EventArgs e)
-        {
-            if(CurrentlyDisplayedTlp == tlpCuisine)
-            {
-                BuildCuisineHome();
-            }
-            if(CurrentlyDisplayedTlp == tlpWaiter)
-            {
-                BuildWaiterHome();
-            }
-        }
-
-        /*
          * Event handler method for Click event on the "Facturer une table" Button in the waiter home TableLayoutPanel.
-         */ 
+         */
         private void tlpWaiterNewBill_Click(object sender, EventArgs e)
         {
             ShowTableLayoutPanel(tlpBilling, tlpWaiter);
@@ -1024,7 +950,7 @@ namespace CateringEasy
                                 break;
                             j++;
                         }
-                        invoicer.NewInvoice(linesToBill, total, "CHF" , "CateringEasy_Order" + orderId + "_InvoiceBill" + (i + 1).ToString());
+                        invoicer.NewInvoice(linesToBill, total, "CHF", "CateringEasy_Order" + orderId + "_InvoiceBill" + (i + 1).ToString());
                         ShowTableLayoutPanel(tlpWaiter, tlpBilling); //Shows the waiter home TableLayoutPanel.
                     }
                     //Resets the text of the controls in the client(s) number TableLayoutPanel.
@@ -1039,12 +965,100 @@ namespace CateringEasy
                 }
             }
             //If the text property in the client(s) number selection Textbox is not convertible to an integer, displays an error message. 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 lblBillingClientsNumberError.Text = "Veuillez entrer un nombre";
                 return;
             }
+        }
+
+        /*
+         * This method returns a new Accordion Control object.
+         */
+        private static Accordion BuildOrdersAccordion()
+        {
+            return new Accordion
+            {
+                AddResizeBars = false,
+                AllowMouseResize = false,
+                AnimateCloseEffect = ((AnimateWindowFlags.VerticalNegative | AnimateWindowFlags.Hide)
+                            | AnimateWindowFlags.Slide),
+                AnimateCloseMillis = 100,
+                AnimateOpenEffect = ((AnimateWindowFlags.VerticalPositive | AnimateWindowFlags.Show)
+                            | AnimateWindowFlags.Slide),
+                AnimateOpenMillis = 100,
+                AutoFixDockStyle = true,
+                AutoScroll = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                BackColor = Color.WhiteSmoke,
+                CheckBoxFactory = null,
+                CheckBoxMargin = new Padding(2),
+                ContentBackColor = null,
+                ContentMargin = new Padding(15, 5, 15, 5),
+                ContentPadding = new Padding(1),
+                ControlBackColor = null,
+                ControlMinimumHeightIsItsPreferredHeight = true,
+                ControlMinimumWidthIsItsPreferredWidth = true,
+                Dock = DockStyle.Fill,
+                DownArrow = null,
+                FillHeight = true,
+                FillLastOpened = false,
+                FillModeGrowOnly = false,
+                FillResetOnCollapse = false,
+                FillWidth = true,
+                Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0),
+                GrabCursor = Cursors.SizeNS,
+                GrabRequiresPositiveFillWeight = true,
+                GrabWidth = 6,
+                GrowAndShrink = true,
+                Insets = new Padding(10),
+                Location = new Point(3, 39),
+                Name = "accCuisine",
+                OpenOnAdd = false,
+                OpenOneOnly = false,
+                Padding = new Padding(10),
+                ResizeBarFactory = null,
+                ResizeBarsAlign = 0.5D,
+                ResizeBarsArrowKeyDelta = 10,
+                ResizeBarsFadeInMillis = 800,
+                ResizeBarsFadeOutMillis = 800,
+                ResizeBarsFadeProximity = 24,
+                ResizeBarsFill = 1D,
+                ResizeBarsKeepFocusAfterMouseDrag = false,
+                ResizeBarsKeepFocusIfControlOutOfView = true,
+                ResizeBarsKeepFocusOnClick = true,
+                ResizeBarsMargin = null,
+                ResizeBarsMinimumLength = 50,
+                ResizeBarsStayInViewOnArrowKey = true,
+                ResizeBarsStayInViewOnMouseDrag = true,
+                ResizeBarsStayVisibleIfFocused = true,
+                ResizeBarsTabStop = true,
+                ShowPartiallyVisibleResizeBars = false,
+                ShowToolMenu = true,
+                ShowToolMenuOnHoverWhenClosed = false,
+                ShowToolMenuOnRightClick = true,
+                ShowToolMenuRequiresPositiveFillWeight = false,
+                Size = new Size(1074, 999),
+                TabIndex = 3,
+                UpArrow = null
+            };
+        }
+        /*
+         * This method returns a new button according to the the parameters of the method.
+         */
+        private static Button GenerateButton(Color col, string name, string text, float fontsize)
+        {
+            return new Button
+            {
+                Font = new Font("Segoe UI Semibold", fontsize, FontStyle.Regular, GraphicsUnit.Point),
+                Dock = DockStyle.Fill,
+                BackColor = col,
+                Name = name,
+                Text = text,
+                UseVisualStyleBackColor = true,
+                FlatStyle = FlatStyle.Flat,
+            };
         }
     }
 }

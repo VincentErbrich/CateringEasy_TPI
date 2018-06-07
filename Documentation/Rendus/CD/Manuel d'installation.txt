@@ -1,0 +1,31 @@
+----------------------------------MANUEL D'INSTALLATION---------------------------------
+-----------------------------PROJET CATERING EASY - TPI 2018----------------------------
+----------------------------------------------------------------------------------------
+-- Choisissez la version du programme que vous souhaitez utiliser : Version fenêtrée ---
+								    Version plein écran-
+
+===================================Version plein écran==================================
+
+1. Dans le dossier Rendus\Exécutables, copiez le dossier "Version plein écran"
+   sur un emplacement du disque dur de votre ordinateur.
+
+2. Ouvrez votre copie du dossier "Version plein écran" et double-cliquez sur l'exécutable
+   "CateringEasy.exe"
+
+3. !ATTENTION! En cas d'erreur non gérée dans le programme, vous ne pouvez pas le quitter
+   sans utiliser le gestionnaire des tâches.
+
+=====================================Version fenêtrée====================================
+
+1. Dans le dossier Rendus\Exécutables, copiez le dossier "Version fenêtrée"
+   sur un emplacement du disque dur de votre ordinateur.
+
+2. Ouvrez votre copie du dossier "Version fenêtrée" et double-cliquez sur l'exécutable
+   "CateringEasy.exe"
+
+3. Cliquez sur l'icône du programme qui apparaît dans votre barre des tâches pour amener
+   le programme en premier plan.
+
+-----------------------------------------------------------------------------------------
+-------------------------------------Vincent Erbrich-------------------------------------
+-----------------------------------------------------------------------------------------
